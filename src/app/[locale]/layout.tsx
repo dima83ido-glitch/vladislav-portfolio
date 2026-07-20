@@ -117,7 +117,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   setRequestLocale(locale);
 
   const session = await getSession();
-  const headerUser = session ? { email: session.user.email, role: session.user.role } : null;
+  const headerUser = session
+    ? {
+        email: session.user.email,
+        role: session.user.role,
+        displayName: session.user.displayName,
+      }
+    : null;
 
   const messages = await getMessages();
   const t = await getTranslations({ locale, namespace: "seo" });

@@ -1,11 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { and, desc, eq, gt, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { users, verificationCodes } from "@/db/schema";
 import { sendVerificationCodeEmail } from "@/lib/email/resend";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { isAdminEmail } from "./admin";
 import {
   OTP_MAX_ATTEMPTS,
@@ -33,15 +34,8 @@ export async function requestCode(
   const email = parsed.data;
   const db = getDb();
 
-  const windowStart = new Date(Date.now() - OTP_REQUEST_WINDOW_MS);
-  const recent = await db
-    .select({ id: verificationCodes.id })
-    .from(verificationCodes)
-    .where(
-      and(eq(verificationCodes.email, email), gt(verificationCodes.createdAt, windowStart))
-    );
-
-  if (recent.length >= OTP_REQUEST_LIMIT) {
+  const { limited } = await checkRateLimit(`login:${email}`, OTP_REQUEST_LIMIT, OTP_REQUEST_WINDOW_MS);
+  if (limited) {
     return { ok: false, error: "rateLimited" };
   }
 

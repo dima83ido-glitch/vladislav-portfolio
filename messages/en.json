@@ -20,20 +20,27 @@
     ]
   },
   "nav": {
+    "home": "Home",
     "about": "About",
-    "skills": "Skills",
+    "portfolio": "Portfolio",
     "services": "Services",
-    "work": "Work",
-    "process": "Process",
     "pricing": "Pricing",
-    "faq": "FAQ",
     "contact": "Contact",
     "contactMe": "Contact Me",
-    "signIn": "Sign in",
+    "signIn": "Login",
+    "register": "Register",
     "account": "Account",
     "admin": "Admin",
     "signOut": "Sign out",
     "language": "Language"
+  },
+  "panel": {
+    "profile": "Profile",
+    "myOrders": "My Orders",
+    "support": "Support",
+    "leaveReview": "Leave Review",
+    "settings": "Settings",
+    "adminDashboard": "Admin Dashboard"
   },
   "footer": {
     "ctaLine1": "Let's build something",
@@ -363,11 +370,6 @@
     "writeReview": "Write a review",
     "form": {
       "title": "Share your experience",
-      "nameLabel": "Your name",
-      "namePlaceholder": "Jane Doe",
-      "emailLabel": "Your email",
-      "emailHint": "Kept private — only used for moderation, never shown publicly.",
-      "emailPlaceholder": "jane@example.com",
       "ratingLabel": "Rating",
       "messageLabel": "Your review",
       "messagePlaceholder": "Tell us about working together...",
@@ -378,8 +380,9 @@
     "success": "Your review has been submitted and is awaiting moderation.",
     "errors": {
       "generic": "Something went wrong. Please try again.",
-      "invalid": "Please check the form — a name, valid email, rating, and a short review are required.",
-      "rateLimited": "You've already submitted a review recently — please try again later."
+      "invalid": "Please check the form — a rating and a short review are required.",
+      "rateLimited": "You've already submitted a review recently — please try again later.",
+      "unauthorized": "Please sign in to leave a review."
     }
   },
   "faq": {
@@ -432,6 +435,7 @@
   },
   "auth": {
     "title": "Sign in",
+    "registerTitle": "Create your account",
     "subtitle": "No passwords — enter your email and we'll send you a one-time code.",
     "emailLabel": "Email address",
     "emailPlaceholder": "you@example.com",

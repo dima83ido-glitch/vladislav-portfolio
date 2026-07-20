@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { cache } from "react";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { sessions, users } from "@/db/schema";
@@ -71,4 +72,53 @@ export async function destroySession() {
   }
 
   cookieStore.delete(SESSION_COOKIE);
+}
+
+/** Revokes every session belonging to a user (e.g. "sign out everywhere"). */
+export async function destroyAllSessions(userId: string) {
+  await getDb().delete(sessions).where(eq(sessions.userId, userId));
+}
+
+type SessionUser = NonNullable<Awaited<ReturnType<typeof getSession>>>;
+
+/**
+ * For Server Actions: throws rather than redirecting, so the caller (a
+ * client component expecting a normal return value) gets an inline error
+ * instead of being yanked to a different page mid-interaction.
+ */
+export async function requireUser(): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+  return session;
+}
+
+export async function requireAdmin(): Promise<SessionUser> {
+  const session = await requireUser();
+  if (session.user.role !== "admin") {
+    throw new Error("Forbidden");
+  }
+  return session;
+}
+
+/**
+ * For layouts/pages: a full navigation to /login is exactly the right UX
+ * when a protected page is hit while logged out, so this redirects instead
+ * of throwing.
+ */
+export async function requireUserOrRedirect(callbackUrl: string): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session) {
+    redirect(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  }
+  return session;
+}
+
+export async function requireAdminOrRedirect(): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session || session.user.role !== "admin") {
+    redirect("/login?callbackUrl=/admin");
+  }
+  return session;
 }

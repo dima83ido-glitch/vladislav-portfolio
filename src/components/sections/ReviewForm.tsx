@@ -5,11 +5,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { FiStar, FiX } from "react-icons/fi";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { useRouter } from "@/i18n/navigation";
 import { submitReview } from "@/lib/reviews/actions";
 
-export function ReviewsWriteButton() {
+export function ReviewsWriteButton({ isLoggedIn }: { isLoggedIn: boolean }) {
   const t = useTranslations("reviews");
   const locale = useLocale();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -27,6 +29,14 @@ export function ReviewsWriteButton() {
     }, 300);
   }
 
+  function handleTrigger() {
+    if (!isLoggedIn) {
+      router.push("/login?callbackUrl=%2F%23reviews");
+      return;
+    }
+    setIsOpen(true);
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (isPending) return;
@@ -38,8 +48,6 @@ export function ReviewsWriteButton() {
     setIsPending(true);
 
     const result = await submitReview({
-      authorName: String(formData.get("authorName") ?? ""),
-      authorEmail: String(formData.get("authorEmail") ?? ""),
       rating,
       body: String(formData.get("body") ?? ""),
       locale,
@@ -60,7 +68,7 @@ export function ReviewsWriteButton() {
     <>
       <MagneticButton
         as="button"
-        onClick={() => setIsOpen(true)}
+        onClick={handleTrigger}
         className="group rounded-full border border-line-strong px-8 py-4 text-sm font-semibold text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
       >
         {t("writeReview")}
@@ -116,37 +124,6 @@ export function ReviewsWriteButton() {
                     aria-hidden="true"
                     className="absolute left-[-9999px] h-0 w-0 opacity-0"
                   />
-
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="authorName" className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-                      {t("form.nameLabel")}
-                    </label>
-                    <input
-                      id="authorName"
-                      name="authorName"
-                      type="text"
-                      required
-                      minLength={2}
-                      maxLength={80}
-                      placeholder={t("form.namePlaceholder")}
-                      className="rounded-xl border border-line-strong bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="authorEmail" className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-                      {t("form.emailLabel")}
-                    </label>
-                    <input
-                      id="authorEmail"
-                      name="authorEmail"
-                      type="email"
-                      required
-                      placeholder={t("form.emailPlaceholder")}
-                      className="rounded-xl border border-line-strong bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
-                    />
-                    <p className="text-xs text-muted">{t("form.emailHint")}</p>
-                  </div>
 
                   <div className="flex flex-col gap-1.5">
                     <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">

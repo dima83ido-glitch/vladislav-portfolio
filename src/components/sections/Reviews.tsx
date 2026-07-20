@@ -4,10 +4,11 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { ReviewsWriteButton } from "@/components/sections/ReviewForm";
 import { getApprovedReviews } from "@/db/queries/reviews";
+import { getSession } from "@/lib/auth/session";
 
 export async function Reviews() {
   const t = await getTranslations("reviews");
-  const reviews = await getApprovedReviews();
+  const [reviews, session] = await Promise.all([getApprovedReviews(), getSession()]);
 
   return (
     <section id="reviews" className="relative py-32 lg:py-40">
@@ -52,7 +53,7 @@ export async function Reviews() {
         )}
 
         <Reveal variant="scale" delay={0.15} className="mt-14 flex justify-center">
-          <ReviewsWriteButton />
+          <ReviewsWriteButton isLoggedIn={Boolean(session)} />
         </Reveal>
       </div>
     </section>

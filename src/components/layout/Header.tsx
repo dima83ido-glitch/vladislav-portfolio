@@ -1,30 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { FiArrowUpRight, FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX } from "react-icons/fi";
 import { Link } from "@/i18n/navigation";
 import { NAV_LINKS } from "@/lib/data/nav";
 import { SITE } from "@/lib/data/site";
 import { cn } from "@/lib/utils";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
-import { logout } from "@/lib/auth/actions";
+import { UserPanel } from "@/components/layout/UserPanel";
 
-type HeaderUser = { email: string; role: "admin" | "customer" } | null;
+type HeaderUser = {
+  email: string;
+  role: "admin" | "customer";
+  displayName: string | null;
+} | null;
 
 export function Header({ user = null }: { user?: HeaderUser }) {
   const t = useTranslations("nav");
-  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { scrollY } = useScroll();
-
-  async function handleSignOut() {
-    await logout();
-    router.refresh();
-  }
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 24);
@@ -69,37 +66,24 @@ export function Header({ user = null }: { user?: HeaderUser }) {
 
           <div className="hidden items-center gap-3 lg:flex">
             <LanguageSwitcher />
-            {user?.role === "admin" ? (
-              <Link
-                href="/admin"
-                className="text-sm font-medium text-muted transition-colors hover:text-foreground"
-              >
-                {t("admin")}
-              </Link>
-            ) : null}
             {user ? (
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="text-sm font-medium text-muted transition-colors hover:text-foreground"
-              >
-                {t("signOut")}
-              </button>
+              <UserPanel user={user} />
             ) : (
-              <Link
-                href="/login"
-                className="text-sm font-medium text-muted transition-colors hover:text-foreground"
-              >
-                {t("signIn")}
-              </Link>
+              <>
+                <Link
+                  href="/login?intent=register"
+                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+                >
+                  {t("register")}
+                </Link>
+                <Link
+                  href="/login"
+                  className="rounded-full bg-blue-soft px-6 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft/90"
+                >
+                  {t("signIn")}
+                </Link>
+              </>
             )}
-            <Link
-              href="#contact"
-              className="group inline-flex items-center gap-2 rounded-full border border-line-strong px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
-            >
-              {t("contactMe")}
-              <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
           </div>
 
           <button
@@ -148,34 +132,25 @@ export function Header({ user = null }: { user?: HeaderUser }) {
               className="mt-8 flex flex-wrap items-center gap-4"
             >
               <LanguageSwitcher />
-              {user?.role === "admin" ? (
-                <Link
-                  href="/admin"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
-                >
-                  {t("admin")}
-                </Link>
-              ) : null}
               {user ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    handleSignOut();
-                  }}
-                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
-                >
-                  {t("signOut")}
-                </button>
+                <UserPanel user={user} />
               ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
-                >
-                  {t("signIn")}
-                </Link>
+                <>
+                  <Link
+                    href="/login?intent=register"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+                  >
+                    {t("register")}
+                  </Link>
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="rounded-full bg-blue-soft px-6 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft/90"
+                  >
+                    {t("signIn")}
+                  </Link>
+                </>
               )}
             </motion.div>
           </motion.div>

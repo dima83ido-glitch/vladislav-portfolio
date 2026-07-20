@@ -12,7 +12,13 @@ import { requestCode, verifyCode } from "@/lib/auth/actions";
 
 type Step = "email" | "code";
 
-export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
+export function LoginForm({
+  callbackUrl,
+  isRegister = false,
+}: {
+  callbackUrl: string;
+  isRegister?: boolean;
+}) {
   const t = useTranslations("auth");
   const router = useRouter();
 
@@ -85,7 +91,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl: string }) {
             >
               <div className="flex flex-col gap-2">
                 <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-                  {t("title")}
+                  {isRegister ? t("registerTitle") : t("title")}
                 </h1>
                 <p className="text-sm leading-relaxed text-muted">{t("subtitle")}</p>
               </div>

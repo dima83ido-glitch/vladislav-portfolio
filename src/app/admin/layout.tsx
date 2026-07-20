@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import { getSession } from "@/lib/auth/session";
+import { requireAdminOrRedirect } from "@/lib/auth/session";
 import { logoutAndRedirect } from "@/lib/auth/actions";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { SITE } from "@/lib/data/site";
@@ -16,11 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
-
-  if (!session || session.user.role !== "admin") {
-    redirect("/login?callbackUrl=/admin");
-  }
+  await requireAdminOrRedirect();
 
   return (
     <html lang="en" className={inter.variable}>

@@ -1,4 +1,8 @@
+import { sql } from "drizzle-orm";
 import {
+  boolean,
+  integer,
+  jsonb,
   pgEnum,
   pgTable,
   smallint,
@@ -7,14 +11,67 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+/**
+ * Admin-editable text is stored as JSON keyed by locale rather than in a
+ * join table — English is required, uk/ru are optional and fall back to
+ * English in the UI. Keeps the CMS relationally simple while preserving
+ * full i18n for content that used to live in messages/*.json.
+ */
+export type LocalizedText = { en: string; uk?: string; ru?: string };
+export type LocalizedList = { en: string[]; uk?: string[]; ru?: string[] };
+
+export type PhilosophyCard = { icon: string; title: LocalizedText; description: LocalizedText };
+export type HeroStat = { value: number; suffix: string; label: LocalizedText };
+
+// ============================== Enums ==============================
+
 export const userRoleEnum = pgEnum("user_role", ["customer", "admin"]);
+export const userStatusEnum = pgEnum("user_status", ["active", "suspended"]);
 export const verificationPurposeEnum = pgEnum("verification_purpose", ["login"]);
 export const reviewStatusEnum = pgEnum("review_status", ["pending", "approved", "rejected"]);
+export const contentStatusEnum = pgEnum("content_status", ["draft", "published"]);
+export const periodKeyEnum = pgEnum("period_key", ["oneTime", "quote"]);
+export const orderStatusEnum = pgEnum("order_status", [
+  "pending_payment",
+  "paid",
+  "in_progress",
+  "delivered",
+  "completed",
+  "cancelled",
+  "payment_rejected",
+]);
+export const paymentMethodEnum = pgEnum("payment_method", ["stripe", "crypto"]);
+export const paymentStatusEnum = pgEnum("payment_status", [
+  "pending",
+  "awaiting_confirmation",
+  "approved",
+  "rejected",
+  "failed",
+]);
+export const cryptoCurrencyEnum = pgEnum("crypto_currency", [
+  "BTC",
+  "ETH",
+  "USDT_TRC20",
+  "USDT_ERC20",
+  "TON",
+  "SOL",
+]);
+export const ticketStatusEnum = pgEnum("ticket_status", [
+  "open",
+  "awaiting_admin",
+  "awaiting_user",
+  "closed",
+]);
+
+// ========================== Auth / identity ==========================
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   role: userRoleEnum("role").notNull().default("customer"),
+  displayName: text("display_name"),
+  username: text("username").unique(),
+  status: userStatusEnum("status").notNull().default("active"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 });
@@ -40,6 +97,16 @@ export const sessions = pgTable("sessions", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+// ========================= Rate limiting =========================
+
+export const rateLimitHits = pgTable("rate_limit_hits", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  key: text("key").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ============================ Reviews ============================
+
 export const reviews = pgTable("reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
   authorName: text("author_name").notNull(),
@@ -54,8 +121,205 @@ export const reviews = pgTable("reviews", {
   moderatedBy: uuid("moderated_by").references(() => users.id, { onDelete: "set null" }),
 });
 
+// ======================= Pricing CMS =======================
+
+export const pricingPlans = pgTable("pricing_plans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  name: jsonb("name").notNull().$type<LocalizedText>(),
+  description: jsonb("description").notNull().$type<LocalizedText>(),
+  features: jsonb("features").notNull().$type<LocalizedList>(),
+  price: text("price").notNull(),
+  periodKey: periodKeyEnum("period_key").notNull(),
+  highlighted: boolean("highlighted").notNull().default(false),
+  showOnHomepage: boolean("show_on_homepage").notNull().default(false),
+  ctaOverrideHref: text("cta_override_href"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  status: contentStatusEnum("status").notNull().default("published"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ====================== Portfolio CMS ======================
+
+export const portfolioProjects = pgTable("portfolio_projects", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  title: jsonb("title").notNull().$type<LocalizedText>(),
+  category: jsonb("category").notNull().$type<LocalizedText>(),
+  description: jsonb("description").notNull().$type<LocalizedText>(),
+  results: jsonb("results").$type<LocalizedText>(),
+  technologies: text("technologies")
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
+  coverImageUrl: text("cover_image_url"),
+  videoUrl: text("video_url"),
+  liveUrl: text("live_url"),
+  githubUrl: text("github_url"),
+  seoTitle: jsonb("seo_title").$type<LocalizedText>(),
+  seoDescription: jsonb("seo_description").$type<LocalizedText>(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  status: contentStatusEnum("status").notNull().default("published"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ================== About / Services / Skills CMS ==================
+
+/** Singleton row (id is always 1) holding the About section + Hero stats. */
+export const aboutContent = pgTable("about_content", {
+  id: integer("id").primaryKey().default(1),
+  biography: jsonb("biography").notNull().$type<LocalizedList>(),
+  philosophyCards: jsonb("philosophy_cards").notNull().$type<PhilosophyCard[]>(),
+  heroStats: jsonb("hero_stats").notNull().$type<HeroStat[]>(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const services = pgTable("services", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  icon: text("icon").notNull(),
+  title: jsonb("title").notNull().$type<LocalizedText>(),
+  description: jsonb("description").notNull().$type<LocalizedText>(),
+  features: jsonb("features").notNull().$type<LocalizedList>(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  status: contentStatusEnum("status").notNull().default("published"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const skillGroups = pgTable("skill_groups", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  category: jsonb("category").notNull().$type<LocalizedText>(),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
+export const skills = pgTable("skills", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  groupId: uuid("group_id")
+    .notNull()
+    .references(() => skillGroups.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  level: smallint("level").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
+// ========================= Orders =========================
+
+export const orders = pgTable("orders", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  planId: uuid("plan_id").references(() => pricingPlans.id, { onDelete: "set null" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  /** Cents. */
+  price: integer("price").notNull(),
+  currency: text("currency").notNull().default("usd"),
+  status: orderStatusEnum("status").notNull().default("pending_payment"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const orderMessages = pgTable("order_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const orderFiles = pgTable("order_files", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+  uploaderId: uuid("uploader_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  fileUrl: text("file_url").notNull(),
+  fileName: text("file_name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ========================= Payments =========================
+
+export const payments = pgTable("payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  method: paymentMethodEnum("method").notNull(),
+  /** Cents. */
+  amount: integer("amount").notNull(),
+  currency: text("currency").notNull().default("usd"),
+  status: paymentStatusEnum("status").notNull().default("pending"),
+  stripeSessionId: text("stripe_session_id"),
+  stripePaymentIntentId: text("stripe_payment_intent_id"),
+  cryptoCurrency: cryptoCurrencyEnum("crypto_currency"),
+  cryptoTxHash: text("crypto_tx_hash"),
+  reviewedBy: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ========================= Support =========================
+
+export const supportTickets = pgTable("support_tickets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  subject: text("subject").notNull(),
+  status: ticketStatusEnum("status").notNull().default("open"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const supportMessages = pgTable("support_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ticketId: uuid("ticket_id")
+    .notNull()
+    .references(() => supportTickets.id, { onDelete: "cascade" }),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ============================ Types ============================
+
 export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
 export type VerificationCode = typeof verificationCodes.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type Review = typeof reviews.$inferSelect;
 export type NewReview = typeof reviews.$inferInsert;
+export type PricingPlan = typeof pricingPlans.$inferSelect;
+export type NewPricingPlan = typeof pricingPlans.$inferInsert;
+export type PortfolioProject = typeof portfolioProjects.$inferSelect;
+export type NewPortfolioProject = typeof portfolioProjects.$inferInsert;
+export type AboutContent = typeof aboutContent.$inferSelect;
+export type Service = typeof services.$inferSelect;
+export type NewService = typeof services.$inferInsert;
+export type SkillGroup = typeof skillGroups.$inferSelect;
+export type Skill = typeof skills.$inferSelect;
+export type Order = typeof orders.$inferSelect;
+export type NewOrder = typeof orders.$inferInsert;
+export type OrderMessage = typeof orderMessages.$inferSelect;
+export type OrderFile = typeof orderFiles.$inferSelect;
+export type Payment = typeof payments.$inferSelect;
+export type NewPayment = typeof payments.$inferInsert;
+export type SupportTicket = typeof supportTickets.$inferSelect;
+export type SupportMessage = typeof supportMessages.$inferSelect;

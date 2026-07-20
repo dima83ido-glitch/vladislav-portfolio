@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, eq, gt } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { reviews } from "@/db/schema";
 import { routing } from "@/i18n/routing";
-import { getSession } from "@/lib/auth/session";
+import { requireAdmin, requireUser } from "@/lib/auth/session";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { reviewSubmissionSchema, type ReviewSubmissionInput } from "./validation";
 
 const REVIEW_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
@@ -18,48 +19,47 @@ function revalidateHomepages() {
 
 export async function submitReview(
   input: ReviewSubmissionInput
-): Promise<{ ok: true } | { ok: false; error: "invalid" | "rateLimited" | "generic" }> {
+): Promise<
+  { ok: true } | { ok: false; error: "invalid" | "rateLimited" | "unauthorized" | "generic" }
+> {
+  const session = await requireUser().catch(() => null);
+  if (!session) {
+    return { ok: false, error: "unauthorized" };
+  }
+
   const parsed = reviewSubmissionSchema.safeParse(input);
   if (!parsed.success || parsed.data.website) {
     return { ok: false, error: "invalid" };
   }
 
-  const { authorName, authorEmail, rating, body, locale } = parsed.data;
-  const db = getDb();
+  const { rating, body, locale } = parsed.data;
 
   try {
-    const windowStart = new Date(Date.now() - REVIEW_RATE_LIMIT_WINDOW_MS);
-    const recent = await db
-      .select({ id: reviews.id })
-      .from(reviews)
-      .where(and(eq(reviews.authorEmail, authorEmail), gt(reviews.createdAt, windowStart)));
-
-    if (recent.length > 0) {
+    const { limited } = await checkRateLimit(
+      `review:${session.user.id}`,
+      1,
+      REVIEW_RATE_LIMIT_WINDOW_MS
+    );
+    if (limited) {
       return { ok: false, error: "rateLimited" };
     }
 
-    await db.insert(reviews).values({
-      authorName,
-      authorEmail,
-      rating,
-      body,
-      locale,
-      status: "pending",
-    });
+    await getDb()
+      .insert(reviews)
+      .values({
+        authorName: session.user.displayName || session.user.email.split("@")[0],
+        authorEmail: session.user.email,
+        rating,
+        body,
+        locale,
+        status: "pending",
+      });
 
     return { ok: true };
   } catch (error) {
     console.error("Failed to submit review:", error);
     return { ok: false, error: "generic" };
   }
-}
-
-async function requireAdmin() {
-  const session = await getSession();
-  if (!session || session.user.role !== "admin") {
-    throw new Error("Forbidden");
-  }
-  return session;
 }
 
 export async function approveReview(id: string) {

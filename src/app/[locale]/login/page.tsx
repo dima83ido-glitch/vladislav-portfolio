@@ -6,13 +6,14 @@ import { LoginForm } from "@/components/auth/LoginForm";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; intent?: string }>;
 };
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params, searchParams }: PageProps) {
   const { locale } = await params;
+  const { intent } = await searchParams;
   const t = await getTranslations({ locale, namespace: "auth" });
-  return { title: t("title") };
+  return { title: intent === "register" ? t("registerTitle") : t("title") };
 }
 
 export default async function LoginPage({ params, searchParams }: PageProps) {
@@ -20,12 +21,15 @@ export default async function LoginPage({ params, searchParams }: PageProps) {
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const { callbackUrl } = await searchParams;
+  const { callbackUrl, intent } = await searchParams;
 
   return (
     <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 py-32">
       <div className="w-full max-w-md">
-        <LoginForm callbackUrl={callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/"} />
+        <LoginForm
+          callbackUrl={callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/"}
+          isRegister={intent === "register"}
+        />
       </div>
     </section>
   );

@@ -1,8 +1,11 @@
 import { z } from "zod";
 
+/**
+ * Reviews require a logged-in session (see submitReview) — the author's
+ * name/email come from the account, not the form, so this only validates
+ * what the visitor actually supplies.
+ */
 export const reviewSubmissionSchema = z.object({
-  authorName: z.string().trim().min(2).max(80),
-  authorEmail: z.string().trim().toLowerCase().email(),
   rating: z.coerce.number().int().min(1).max(5),
   body: z.string().trim().min(10).max(2000),
   locale: z.string().trim().min(2).max(5),
