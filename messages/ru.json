@@ -459,5 +459,115 @@
       "tooManyAttempts": "Слишком много неверных попыток. Запросите новый код.",
       "generic": "Что-то пошло не так. Попробуйте ещё раз."
     }
+  },
+  "account": {
+    "nav": {
+      "profile": "Профиль",
+      "orders": "Заказы",
+      "support": "Поддержка"
+    },
+    "profile": {
+      "title": "Профиль",
+      "memberSince": "С нами с {date}",
+      "displayName": "Отображаемое имя",
+      "notSet": "Не указано",
+      "username": "Юзернейм",
+      "email": "Email",
+      "accountStatus": "Статус аккаунта",
+      "statusActive": "Активен",
+      "statusSuspended": "Заблокирован",
+      "stats": {
+        "completedOrders": "Завершённые заказы",
+        "currentOrders": "Активные заказы",
+        "totalSpent": "Потрачено всего"
+      },
+      "security": {
+        "title": "Безопасность",
+        "signOutEverywhere": "Выйти со всех устройств",
+        "signOutEverywhereDescription": "Немедленно завершает все активные сеансы на всех устройствах.",
+        "done": "Готово — вы вышли со всех устройств, кроме этого."
+      },
+      "language": "Язык",
+      "logout": "Выйти",
+      "edit": {
+        "displayNamePlaceholder": "Добавьте отображаемое имя",
+        "usernamePlaceholder": "your-username",
+        "save": "Сохранить",
+        "saving": "Сохраняем…",
+        "success": "Профиль обновлён."
+      },
+      "errors": {
+        "invalid": "Проверьте имя и юзернейм.",
+        "usernameTaken": "Этот юзернейм уже занят.",
+        "generic": "Что-то пошло не так. Попробуйте ещё раз."
+      }
+    },
+    "orders": {
+      "title": "Мои заказы",
+      "empty": "У вас пока нет заказов.",
+      "browsePlans": "Посмотреть тарифы",
+      "status": {
+        "pending_payment": "Ожидает оплаты",
+        "paid": "Оплачено",
+        "in_progress": "В работе",
+        "delivered": "Сдано",
+        "completed": "Завершено",
+        "cancelled": "Отменено",
+        "payment_rejected": "Оплата отклонена"
+      },
+      "price": "Цена",
+      "paymentMethod": "Способ оплаты",
+      "created": "Создано",
+      "progress": "Прогресс",
+      "detail": {
+        "back": "К заказам",
+        "messagesTitle": "Сообщения",
+        "messagePlaceholder": "Напишите сообщение...",
+        "send": "Отправить",
+        "filesTitle": "Файлы",
+        "noFiles": "Файлов пока нет.",
+        "invoice": "Посмотреть счёт"
+      },
+      "invoice": {
+        "title": "Счёт",
+        "order": "Заказ",
+        "date": "Дата",
+        "amount": "Сумма",
+        "status": "Статус",
+        "print": "Печать"
+      }
+    },
+    "support": {
+      "title": "Поддержка",
+      "newTicket": "Новое обращение",
+      "empty": "Обращений пока нет.",
+      "subject": "Тема",
+      "status": {
+        "open": "Открыто",
+        "awaiting_admin": "Ожидает ответа",
+        "awaiting_user": "Получен ответ",
+        "closed": "Закрыто"
+      },
+      "new": {
+        "title": "Новое обращение в поддержку",
+        "subjectLabel": "Тема",
+        "subjectPlaceholder": "С чем нужна помощь?",
+        "bodyLabel": "Сообщение",
+        "bodyPlaceholder": "Опишите проблему...",
+        "submit": "Создать обращение"
+      },
+      "thread": {
+        "back": "К обращениям",
+        "replyPlaceholder": "Напишите ответ...",
+        "send": "Отправить",
+        "closed": "Это обращение закрыто."
+      },
+      "errors": {
+        "invalid": "Пожалуйста, заполните все поля.",
+        "rateLimited": "Вы недавно создали несколько обращений — подождите перед созданием нового.",
+        "forbidden": "У вас нет доступа к этому обращению.",
+        "generic": "Что-то пошло не так. Попробуйте ещё раз."
+      }
+    }
   }
 }

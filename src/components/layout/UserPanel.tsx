@@ -4,18 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { FiLogOut, FiShield, FiStar } from "react-icons/fi";
+import { FiLogOut, FiShield, FiShoppingBag, FiStar, FiUser } from "react-icons/fi";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { logout } from "@/lib/auth/actions";
-import { cn } from "@/lib/utils";
+import { cn, initials } from "@/lib/utils";
 
 type PanelUser = { email: string; role: "admin" | "customer"; displayName: string | null };
-
-function initials(user: PanelUser) {
-  const source = user.displayName || user.email;
-  return source.slice(0, 2).toUpperCase();
-}
 
 export function UserPanel({ user }: { user: PanelUser }) {
   const t = useTranslations("panel");
@@ -35,6 +30,9 @@ export function UserPanel({ user }: { user: PanelUser }) {
   }
 
   const links = [
+    { key: "profile", href: "/account", icon: FiUser },
+    { key: "myOrders", href: "/account/orders", icon: FiShoppingBag },
+    { key: "support", href: "/account/support", icon: FiShield },
     { key: "leaveReview", href: "/#reviews", icon: FiStar },
     ...(user.role === "admin"
       ? [{ key: "adminDashboard", href: "/admin", icon: FiShield }]

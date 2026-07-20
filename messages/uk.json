@@ -459,5 +459,115 @@
       "tooManyAttempts": "Забагато невірних спроб. Запросіть новий код.",
       "generic": "Щось пішло не так. Спробуйте ще раз."
     }
+  },
+  "account": {
+    "nav": {
+      "profile": "Профіль",
+      "orders": "Замовлення",
+      "support": "Підтримка"
+    },
+    "profile": {
+      "title": "Профіль",
+      "memberSince": "З нами з {date}",
+      "displayName": "Ім'я для показу",
+      "notSet": "Не вказано",
+      "username": "Юзернейм",
+      "email": "Email",
+      "accountStatus": "Статус акаунта",
+      "statusActive": "Активний",
+      "statusSuspended": "Заблокований",
+      "stats": {
+        "completedOrders": "Завершені замовлення",
+        "currentOrders": "Активні замовлення",
+        "totalSpent": "Витрачено всього"
+      },
+      "security": {
+        "title": "Безпека",
+        "signOutEverywhere": "Вийти з усіх пристроїв",
+        "signOutEverywhereDescription": "Негайно завершує всі активні сеанси на всіх пристроях.",
+        "done": "Готово — вас вийшло з усіх пристроїв, окрім цього."
+      },
+      "language": "Мова",
+      "logout": "Вийти",
+      "edit": {
+        "displayNamePlaceholder": "Додайте ім'я для показу",
+        "usernamePlaceholder": "your-username",
+        "save": "Зберегти",
+        "saving": "Зберігаємо…",
+        "success": "Профіль оновлено."
+      },
+      "errors": {
+        "invalid": "Перевірте ім'я та юзернейм.",
+        "usernameTaken": "Цей юзернейм вже зайнято.",
+        "generic": "Щось пішло не так. Спробуйте ще раз."
+      }
+    },
+    "orders": {
+      "title": "Мої замовлення",
+      "empty": "У вас ще немає замовлень.",
+      "browsePlans": "Переглянути тарифи",
+      "status": {
+        "pending_payment": "Очікує оплати",
+        "paid": "Оплачено",
+        "in_progress": "У роботі",
+        "delivered": "Здано",
+        "completed": "Завершено",
+        "cancelled": "Скасовано",
+        "payment_rejected": "Оплату відхилено"
+      },
+      "price": "Ціна",
+      "paymentMethod": "Спосіб оплати",
+      "created": "Створено",
+      "progress": "Прогрес",
+      "detail": {
+        "back": "До замовлень",
+        "messagesTitle": "Повідомлення",
+        "messagePlaceholder": "Напишіть повідомлення...",
+        "send": "Надіслати",
+        "filesTitle": "Файли",
+        "noFiles": "Файлів поки немає.",
+        "invoice": "Переглянути рахунок"
+      },
+      "invoice": {
+        "title": "Рахунок",
+        "order": "Замовлення",
+        "date": "Дата",
+        "amount": "Сума",
+        "status": "Статус",
+        "print": "Друк"
+      }
+    },
+    "support": {
+      "title": "Підтримка",
+      "newTicket": "Нове звернення",
+      "empty": "Звернень поки немає.",
+      "subject": "Тема",
+      "status": {
+        "open": "Відкрито",
+        "awaiting_admin": "Очікує відповіді",
+        "awaiting_user": "Отримано відповідь",
+        "closed": "Закрито"
+      },
+      "new": {
+        "title": "Нове звернення в підтримку",
+        "subjectLabel": "Тема",
+        "subjectPlaceholder": "З чим потрібна допомога?",
+        "bodyLabel": "Повідомлення",
+        "bodyPlaceholder": "Опишіть проблему...",
+        "submit": "Створити звернення"
+      },
+      "thread": {
+        "back": "До звернень",
+        "replyPlaceholder": "Напишіть відповідь...",
+        "send": "Надіслати",
+        "closed": "Це звернення закрито."
+      },
+      "errors": {
+        "invalid": "Будь ласка, заповніть усі поля.",
+        "rateLimited": "Ви нещодавно створили кілька звернень — зачекайте, перш ніж створювати нове.",
+        "forbidden": "У вас немає доступу до цього звернення.",
+        "generic": "Щось пішло не так. Спробуйте ще раз."
+      }
+    }
   }
 }

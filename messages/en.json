@@ -459,5 +459,115 @@
       "tooManyAttempts": "Too many incorrect attempts. Please request a new code.",
       "generic": "Something went wrong. Please try again."
     }
+  },
+  "account": {
+    "nav": {
+      "profile": "Profile",
+      "orders": "Orders",
+      "support": "Support"
+    },
+    "profile": {
+      "title": "Profile",
+      "memberSince": "Member since {date}",
+      "displayName": "Display name",
+      "notSet": "Not set",
+      "username": "Username",
+      "email": "Email",
+      "accountStatus": "Account status",
+      "statusActive": "Active",
+      "statusSuspended": "Suspended",
+      "stats": {
+        "completedOrders": "Completed orders",
+        "currentOrders": "Current orders",
+        "totalSpent": "Total spent"
+      },
+      "security": {
+        "title": "Security",
+        "signOutEverywhere": "Sign out of all devices",
+        "signOutEverywhereDescription": "Immediately ends every active session, on every device.",
+        "done": "Done — you've been signed out everywhere except here."
+      },
+      "language": "Language",
+      "logout": "Logout",
+      "edit": {
+        "displayNamePlaceholder": "Add a display name",
+        "usernamePlaceholder": "add-a-username",
+        "save": "Save",
+        "saving": "Saving…",
+        "success": "Profile updated."
+      },
+      "errors": {
+        "invalid": "Please check your display name and username.",
+        "usernameTaken": "That username is already taken.",
+        "generic": "Something went wrong. Please try again."
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "empty": "You don't have any orders yet.",
+      "browsePlans": "Browse plans",
+      "status": {
+        "pending_payment": "Awaiting payment",
+        "paid": "Paid",
+        "in_progress": "In progress",
+        "delivered": "Delivered",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "payment_rejected": "Payment rejected"
+      },
+      "price": "Price",
+      "paymentMethod": "Payment method",
+      "created": "Created",
+      "progress": "Progress",
+      "detail": {
+        "back": "Back to orders",
+        "messagesTitle": "Messages",
+        "messagePlaceholder": "Write a message...",
+        "send": "Send",
+        "filesTitle": "Files",
+        "noFiles": "No files yet.",
+        "invoice": "View invoice"
+      },
+      "invoice": {
+        "title": "Invoice",
+        "order": "Order",
+        "date": "Date",
+        "amount": "Amount",
+        "status": "Status",
+        "print": "Print"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "newTicket": "New ticket",
+      "empty": "No support tickets yet.",
+      "subject": "Subject",
+      "status": {
+        "open": "Open",
+        "awaiting_admin": "Awaiting reply",
+        "awaiting_user": "Replied",
+        "closed": "Closed"
+      },
+      "new": {
+        "title": "New support ticket",
+        "subjectLabel": "Subject",
+        "subjectPlaceholder": "What do you need help with?",
+        "bodyLabel": "Message",
+        "bodyPlaceholder": "Describe the issue...",
+        "submit": "Create ticket"
+      },
+      "thread": {
+        "back": "Back to tickets",
+        "replyPlaceholder": "Write a reply...",
+        "send": "Send",
+        "closed": "This ticket is closed."
+      },
+      "errors": {
+        "invalid": "Please fill in every field.",
+        "rateLimited": "You've created several tickets recently — please wait before creating another.",
+        "forbidden": "You don't have access to this ticket.",
+        "generic": "Something went wrong. Please try again."
+      }
+    }
   }
 }

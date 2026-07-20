@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { sessions, users } from "@/db/schema";
 
@@ -77,6 +77,13 @@ export async function destroySession() {
 /** Revokes every session belonging to a user (e.g. "sign out everywhere"). */
 export async function destroyAllSessions(userId: string) {
   await getDb().delete(sessions).where(eq(sessions.userId, userId));
+}
+
+/** Revokes every session for a user except the one making the request. */
+export async function destroyOtherSessions(userId: string, exceptSessionId: string) {
+  await getDb()
+    .delete(sessions)
+    .where(and(eq(sessions.userId, userId), ne(sessions.id, exceptSessionId)));
 }
 
 type SessionUser = NonNullable<Awaited<ReturnType<typeof getSession>>>;
