@@ -11,17 +11,22 @@ function getClient() {
   return client;
 }
 
-export async function sendVerificationCodeEmail(email: string, code: string) {
+/**
+ * Sends a transactional email, or — when RESEND_API_KEY isn't configured
+ * outside production — logs it to the console instead so local flows are
+ * still fully testable. In production a missing key or from-address always
+ * throws, and the Resend SDK's { error } response (it does NOT throw on
+ * API-level failures like an unverified sending domain) is always checked
+ * and surfaced rather than silently swallowed.
+ */
+async function sendTransactionalEmail(params: { to: string; subject: string; html: string }) {
   const apiKey = process.env.RESEND_API_KEY;
 
   if (!apiKey) {
     if (process.env.NODE_ENV === "production") {
       throw new Error("RESEND_API_KEY is not set");
     }
-    // Local/dev fallback: no Resend key configured, so print the code
-    // instead of emailing it. The DB write of the hashed code is
-    // identical either way — this only affects delivery.
-    console.log(`[dev] Verification code for ${email}: ${code}`);
+    console.log(`[dev] Email to ${params.to} — ${params.subject}\n${params.html}`);
     return;
   }
 
@@ -30,19 +35,25 @@ export async function sendVerificationCodeEmail(email: string, code: string) {
     throw new Error("RESEND_FROM_EMAIL is not set");
   }
 
-  // The Resend SDK does NOT throw on API-level failures (invalid key,
-  // unverified sending domain, rejected recipient, etc.) — it resolves
-  // with { data: null, error }. Silently ignoring `error` here would mean
-  // requestCode()'s try/catch never fires, and the UI would report
-  // "check your email" even though nothing was sent. Surface it.
-  const { error } = await getClient().emails.send({
-    from,
-    to: email,
-    subject: "Your verification code",
-    html: `<div style="font-family:sans-serif;padding:24px;color:#111"><p>Your verification code is:</p><p style="font-size:32px;font-weight:700;letter-spacing:6px;margin:16px 0;">${code}</p><p style="color:#666;font-size:13px;">This code expires in 10 minutes. If you didn't request this, you can safely ignore this email.</p></div>`,
-  });
+  const { error } = await getClient().emails.send({ from, ...params });
 
   if (error) {
     throw new Error(`Resend rejected the email (${error.name}): ${error.message}`);
   }
+}
+
+export async function sendVerificationCodeEmail(email: string, code: string) {
+  await sendTransactionalEmail({
+    to: email,
+    subject: "Your verification code",
+    html: `<div style="font-family:sans-serif;padding:24px;color:#111"><p>Your verification code is:</p><p style="font-size:32px;font-weight:700;letter-spacing:6px;margin:16px 0;">${code}</p><p style="color:#666;font-size:13px;">This code expires in 10 minutes. If you didn't request this, you can safely ignore this email.</p></div>`,
+  });
+}
+
+export async function sendOrderPaidEmail(email: string, orderTitle: string) {
+  await sendTransactionalEmail({
+    to: email,
+    subject: "Payment confirmed",
+    html: `<div style="font-family:sans-serif;padding:24px;color:#111"><p>Your payment for <strong>${orderTitle}</strong> has been confirmed.</p><p style="color:#666;font-size:13px;">Work will begin shortly — you can follow progress and message directly from your order page.</p></div>`,
+  });
 }

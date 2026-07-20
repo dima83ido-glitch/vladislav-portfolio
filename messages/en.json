@@ -220,6 +220,10 @@
     "description": "Transparent, milestone-based pricing — no hidden retainers, no surprise invoices.",
     "mostPopular": "Most popular",
     "morePlans": "More Plans",
+    "errors": {
+      "invalidPlan": "That plan isn't available right now.",
+      "generic": "Something went wrong. Please try again."
+    },
     "periods": {
       "oneTime": "one-time",
       "quote": "quote"
@@ -277,6 +281,10 @@
     "backToHome": "Back to homepage",
     "customCtaNote": "Contact me for a custom quote.",
     "mostPopular": "Most popular",
+    "errors": {
+      "invalidPlan": "That plan isn't available right now.",
+      "generic": "Something went wrong. Please try again."
+    },
     "plans": {
       "starter": {
         "name": "Starter",
@@ -535,6 +543,31 @@
         "amount": "Amount",
         "status": "Status",
         "print": "Print"
+      },
+      "payment": {
+        "title": "Pay for your order",
+        "cardOption": "Pay with card",
+        "cardComingSoon": "Card payments coming soon",
+        "cryptoOption": "Pay with crypto",
+        "crypto": {
+          "title": "Pay with crypto",
+          "selectCurrency": "Select currency",
+          "address": "Wallet address",
+          "copy": "Copy",
+          "copied": "Copied!",
+          "instructions": "Send the exact amount to the address above on the network shown, then paste your transaction hash below and confirm.",
+          "txHashLabel": "Transaction hash",
+          "txHashPlaceholder": "Paste your transaction hash",
+          "submit": "I have paid",
+          "submitting": "Submitting…",
+          "success": "Payment submitted — waiting for confirmation.",
+          "errors": {
+            "invalid": "Please select a currency and enter a valid transaction hash.",
+            "forbidden": "You don't have access to this order.",
+            "rateLimited": "Too many submissions — please wait before trying again.",
+            "generic": "Something went wrong. Please try again."
+          }
+        }
       }
     },
     "support": {

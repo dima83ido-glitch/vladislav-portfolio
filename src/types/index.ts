@@ -27,6 +27,8 @@ export type ProcessStep = {
 export type PricingPlan = {
   id: string;
   price: string;
+  /** Cents; absent for quote-only plans (e.g. "Custom Solution") that aren't directly orderable. */
+  priceCents?: number;
   periodKey: "oneTime" | "quote";
   highlighted: boolean;
 };

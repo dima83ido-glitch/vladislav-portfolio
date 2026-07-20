@@ -14,7 +14,11 @@ type PricingCardProps = {
   customNote?: string;
   features: string[];
   cta: string;
-  ctaHref: string;
+  /** Used unless onCtaClick is provided (e.g. quote-only plans link straight to Contact). */
+  ctaHref?: string;
+  /** When set, the CTA becomes a button (e.g. orderable plans creating a real order) instead of a link. */
+  onCtaClick?: () => void;
+  ctaPending?: boolean;
   highlighted: boolean;
   mostPopularLabel: string;
 };
@@ -28,6 +32,8 @@ export function PricingCard({
   features,
   cta,
   ctaHref,
+  onCtaClick,
+  ctaPending,
   highlighted,
   mostPopularLabel,
 }: PricingCardProps) {
@@ -73,18 +79,34 @@ export function PricingCard({
         ))}
       </ul>
 
-      <MagneticButton
-        as="link"
-        href={ctaHref}
-        className={cn(
-          "w-full rounded-full px-6 py-3.5 text-sm font-semibold transition-colors",
-          highlighted
-            ? "bg-blue-soft text-background hover:bg-blue-soft/90"
-            : "border border-line-strong text-foreground hover:border-blue-soft hover:text-blue-soft"
-        )}
-      >
-        {cta}
-      </MagneticButton>
+      {onCtaClick ? (
+        <MagneticButton
+          as="button"
+          onClick={onCtaClick}
+          disabled={ctaPending}
+          className={cn(
+            "w-full justify-center rounded-full px-6 py-3.5 text-sm font-semibold transition-colors",
+            highlighted
+              ? "bg-blue-soft text-background hover:bg-blue-soft/90"
+              : "border border-line-strong text-foreground hover:border-blue-soft hover:text-blue-soft"
+          )}
+        >
+          {cta}
+        </MagneticButton>
+      ) : (
+        <MagneticButton
+          as="link"
+          href={ctaHref ?? "/#contact"}
+          className={cn(
+            "w-full rounded-full px-6 py-3.5 text-sm font-semibold transition-colors",
+            highlighted
+              ? "bg-blue-soft text-background hover:bg-blue-soft/90"
+              : "border border-line-strong text-foreground hover:border-blue-soft hover:text-blue-soft"
+          )}
+        >
+          {cta}
+        </MagneticButton>
+      )}
     </motion.div>
   );
 }

@@ -7,9 +7,11 @@ import { Reveal } from "@/components/ui/Reveal";
 import { PricingCard } from "@/components/ui/PricingCard";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { PRICING_PLANS } from "@/lib/data/pricing";
+import { usePlanOrder } from "@/components/pricing/usePlanOrder";
 
 export function Pricing() {
   const t = useTranslations("pricing");
+  const { order, pendingPlanId, errorKey } = usePlanOrder("home");
 
   return (
     <section id="pricing" className="relative py-32 lg:py-40">
@@ -33,13 +35,19 @@ export function Pricing() {
                 period={t(`periods.${plan.periodKey}`)}
                 features={t.raw(`plans.${plan.id}.features`)}
                 cta={t(`plans.${plan.id}.cta`)}
-                ctaHref="#contact"
+                ctaHref={plan.priceCents ? undefined : "#contact"}
+                onCtaClick={plan.priceCents ? () => order(plan.id) : undefined}
+                ctaPending={pendingPlanId === plan.id}
                 highlighted={plan.highlighted}
                 mostPopularLabel={t("mostPopular")}
               />
             </Reveal>
           ))}
         </div>
+
+        {errorKey ? (
+          <p className="mt-6 text-center text-sm text-red-400">{t(`errors.${errorKey}`)}</p>
+        ) : null}
 
         <Reveal variant="up" delay={0.3} className="mt-14 flex justify-center">
           <MagneticButton

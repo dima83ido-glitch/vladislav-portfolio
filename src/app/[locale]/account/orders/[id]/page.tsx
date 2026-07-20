@@ -8,6 +8,8 @@ import { requireUserOrRedirect } from "@/lib/auth/session";
 import { getLatestApprovedPayment, getOrderFiles, getOrderForUser, getOrderMessages } from "@/db/queries/orders";
 import { OrderStatusBadge, ORDER_PROGRESS } from "@/components/account/OrderStatusBadge";
 import { OrderMessages } from "@/components/account/OrderMessages";
+import { createStripeCheckoutSession } from "@/lib/payments/actions";
+import { isStripeConfigured } from "@/lib/payments/stripe";
 
 type PageProps = { params: Promise<{ locale: string; id: string }> };
 
@@ -99,6 +101,34 @@ export default async function OrderDetailPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {order.status === "pending_payment" ? (
+        <div className="flex flex-col gap-4 rounded-2xl border border-blue-soft/40 bg-blue-soft/5 p-6">
+          <span className="text-sm font-semibold text-foreground">{t("payment.title")}</span>
+          <div className="flex flex-wrap gap-3">
+            {isStripeConfigured() ? (
+              <form action={createStripeCheckoutSession.bind(null, order.id)}>
+                <button
+                  type="submit"
+                  className="rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-colors hover:bg-blue-soft"
+                >
+                  {t("payment.cardOption")}
+                </button>
+              </form>
+            ) : (
+              <span className="rounded-full border border-line-strong px-6 py-3 text-sm font-medium text-muted">
+                {t("payment.cardComingSoon")}
+              </span>
+            )}
+            <Link
+              href={`/account/orders/${order.id}/pay/crypto`}
+              className="rounded-full border border-line-strong px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
+            >
+              {t("payment.cryptoOption")}
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       <OrderMessages orderId={order.id} messages={messages} currentUserEmail={session.user.email} />
 
