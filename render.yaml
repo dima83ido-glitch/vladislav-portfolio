@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: vladislav-portfolio
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false

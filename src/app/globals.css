@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+:root {
+  --background: #030407;
+  --surface: #0a0d16;
+  --surface-2: #0d1119;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --foreground: #f5f7fb;
+  --muted-foreground: #8a90a6;
+  --blue: #4d7dff;
+  --blue-soft: #7aa2ff;
+  --blue-dim: #1c3468;
+  --blue-glow: rgba(77, 125, 255, 0.35);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted-foreground);
+  --color-blue: var(--blue);
+  --color-blue-soft: var(--blue-soft);
+  --color-blue-dim: var(--blue-dim);
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 6s ease-in-out infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-18px);
+    }
+  }
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+* {
+  border-color: var(--line);
+}
+
+html {
+  background: var(--background);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--blue);
+  color: #030407;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--blue-dim);
+  border-radius: 999px;
+  border: 2px solid var(--background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--blue);
+}
+
+html {
+  scrollbar-color: var(--blue-dim) var(--background);
+}
+
+.font-serif-italic {
+  font-family: var(--font-serif), serif;
+  font-style: italic;
+}
+
+/* Subtle grain / noise texture overlay for premium depth */
+.noise-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Hide native cursor when custom cursor is active (fine pointer devices only) */
+@media (hover: hover) and (pointer: fine) {
+  html.custom-cursor,
+  html.custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

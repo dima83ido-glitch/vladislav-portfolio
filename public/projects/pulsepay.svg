@@ -1,0 +1,18 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b1526"/>
+      <stop offset="1" stop-color="#030407"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity="0.05"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect width="800" height="600" fill="url(#grid)"/>
+  <circle cx="620" cy="180" r="220" fill="#4d7dff" opacity="0.12"/>
+  <polyline points="80,300 200,300 240,220 280,380 320,300 400,300 440,250 480,350 520,300 720,300"
+    fill="none" stroke="#7aa2ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="280" cy="380" r="6" fill="#7aa2ff"/>
+  <text x="700" y="560" text-anchor="end" font-family="Arial, sans-serif" font-weight="800" font-size="120" fill="#ffffff" opacity="0.06">P</text>
+</svg>

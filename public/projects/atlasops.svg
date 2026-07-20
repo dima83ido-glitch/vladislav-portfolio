@@ -1,0 +1,25 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="800" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0d1424"/>
+      <stop offset="1" stop-color="#030407"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="150" cy="480" r="240" fill="#4d7dff" opacity="0.1"/>
+  <g stroke="#7aa2ff" stroke-opacity="0.5" stroke-width="2" fill="none">
+    <path d="M120 180 L320 260 L520 160 L680 280"/>
+    <path d="M320 260 L360 440 L560 420 L520 160"/>
+    <path d="M360 440 L180 480"/>
+  </g>
+  <g fill="#7aa2ff">
+    <circle cx="120" cy="180" r="7"/>
+    <circle cx="320" cy="260" r="7"/>
+    <circle cx="520" cy="160" r="7"/>
+    <circle cx="680" cy="280" r="7"/>
+    <circle cx="360" cy="440" r="7"/>
+    <circle cx="560" cy="420" r="7"/>
+  </g>
+  <circle cx="180" cy="480" r="7" fill="#4d7dff"/>
+  <text x="700" y="560" text-anchor="end" font-family="Arial, sans-serif" font-weight="800" font-size="120" fill="#ffffff" opacity="0.06">A</text>
+</svg>

@@ -1,0 +1,58 @@
+import type { PricingPlan } from "@/types";
+
+export const PRICING_PLANS: PricingPlan[] = [
+  {
+    id: "starter",
+    name: "Starter",
+    price: "$1,200",
+    period: "one-time",
+    description: "A focused, high-impact site for launches and single-product businesses.",
+    features: [
+      "Up to 5 sections",
+      "Responsive, pixel-perfect build",
+      "On-page SEO foundations",
+      "Scroll & hover animations",
+      "2 rounds of revisions",
+      "2 weeks delivery",
+    ],
+    highlighted: false,
+    cta: "Start a project",
+  },
+  {
+    id: "business",
+    name: "Business",
+    price: "$3,200",
+    period: "one-time",
+    description: "A complete multi-page site with a design system built to grow with you.",
+    features: [
+      "Up to 10 pages",
+      "Custom design system",
+      "CMS integration",
+      "Advanced motion & micro-interactions",
+      "Analytics & performance setup",
+      "4 rounds of revisions",
+      "4–5 weeks delivery",
+      "30 days post-launch support",
+    ],
+    highlighted: true,
+    cta: "Start a project",
+  },
+  {
+    id: "premium",
+    name: "Premium",
+    price: "Custom",
+    period: "quote",
+    description: "Dashboards, Telegram Web Apps, and bespoke platforms with full-stack scope.",
+    features: [
+      "Full-stack architecture",
+      "Custom backend & integrations",
+      "Dashboard / Web App builds",
+      "Dedicated technical planning",
+      "Unlimited revision rounds",
+      "Priority delivery timeline",
+      "90 days post-launch support",
+    ],
+    highlighted: false,
+    cta: "Request a quote",
+  },
+];
