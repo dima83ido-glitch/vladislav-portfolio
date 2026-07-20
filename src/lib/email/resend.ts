@@ -30,10 +30,19 @@ export async function sendVerificationCodeEmail(email: string, code: string) {
     throw new Error("RESEND_FROM_EMAIL is not set");
   }
 
-  await getClient().emails.send({
+  // The Resend SDK does NOT throw on API-level failures (invalid key,
+  // unverified sending domain, rejected recipient, etc.) — it resolves
+  // with { data: null, error }. Silently ignoring `error` here would mean
+  // requestCode()'s try/catch never fires, and the UI would report
+  // "check your email" even though nothing was sent. Surface it.
+  const { error } = await getClient().emails.send({
     from,
     to: email,
     subject: "Your verification code",
     html: `<div style="font-family:sans-serif;padding:24px;color:#111"><p>Your verification code is:</p><p style="font-size:32px;font-weight:700;letter-spacing:6px;margin:16px 0;">${code}</p><p style="color:#666;font-size:13px;">This code expires in 10 minutes. If you didn't request this, you can safely ignore this email.</p></div>`,
   });
+
+  if (error) {
+    throw new Error(`Resend rejected the email (${error.name}): ${error.message}`);
+  }
 }
