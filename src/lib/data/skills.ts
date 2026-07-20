@@ -2,7 +2,7 @@ import type { SkillGroup } from "@/types";
 
 export const SKILL_GROUPS: SkillGroup[] = [
   {
-    category: "Frontend",
+    id: "frontend",
     skills: [
       { name: "React / Next.js", level: 97 },
       { name: "TypeScript", level: 95 },
@@ -11,7 +11,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
     ],
   },
   {
-    category: "Backend",
+    id: "backend",
     skills: [
       { name: "Node.js", level: 90 },
       { name: "PostgreSQL", level: 86 },
@@ -20,7 +20,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
     ],
   },
   {
-    category: "Product & Craft",
+    id: "product",
     skills: [
       { name: "UI / UX Design", level: 93 },
       { name: "Motion Design", level: 90 },

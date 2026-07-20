@@ -8,17 +8,23 @@ import {
   type RefObject,
 } from "react";
 import { motion } from "framer-motion";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+const MotionLink = motion(Link);
 
 type MagneticButtonProps = {
   children: ReactNode;
   className?: string;
   strength?: number;
-  as?: "button" | "a";
+  /** "a" for hash anchors / external URLs, "link" for locale-aware internal navigation. */
+  as?: "button" | "a" | "link";
   href?: string;
   target?: string;
   rel?: string;
   onClick?: () => void;
+  disabled?: boolean;
+  type?: "button" | "submit";
 };
 
 export function MagneticButton({
@@ -30,6 +36,8 @@ export function MagneticButton({
   target,
   rel,
   onClick,
+  disabled,
+  type = "button",
 }: MagneticButtonProps) {
   const ref = useRef<HTMLAnchorElement | HTMLButtonElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -60,8 +68,25 @@ export function MagneticButton({
     onMouseLeave: handleMouseLeave,
     animate: { x: offset.x, y: offset.y },
     transition: { type: "spring", stiffness: 150, damping: 12, mass: 0.4 },
-    className: cn("inline-flex items-center justify-center", className),
+    className: cn(
+      "inline-flex items-center justify-center",
+      disabled && "pointer-events-none opacity-60",
+      className
+    ),
   };
+
+  if (as === "link") {
+    return (
+      <MotionLink
+        ref={ref as RefObject<HTMLAnchorElement>}
+        href={href ?? "/"}
+        onClick={onClick}
+        {...sharedProps}
+      >
+        {content}
+      </MotionLink>
+    );
+  }
 
   if (as === "a") {
     return (
@@ -81,8 +106,9 @@ export function MagneticButton({
   return (
     <motion.button
       ref={ref as RefObject<HTMLButtonElement>}
-      type="button"
+      type={type}
       onClick={onClick}
+      disabled={disabled}
       {...sharedProps}
     >
       {content}

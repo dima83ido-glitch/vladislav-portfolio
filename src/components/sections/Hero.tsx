@@ -3,18 +3,21 @@
 import { useEffect, useRef } from "react";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import { FiArrowDown, FiArrowUpRight } from "react-icons/fi";
+import { useTranslations } from "next-intl";
 import { GlowBackground } from "@/components/ui/GlowBackground";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
-import { SITE } from "@/lib/data/site";
-
-const STATS = [
-  { value: 40, suffix: "+", label: "Projects delivered" },
-  { value: 5, suffix: "+", label: "Years of experience" },
-  { value: 98, suffix: "%", label: "Client satisfaction" },
-];
 
 export function Hero() {
+  const t = useTranslations("hero");
+  const siteT = useTranslations("site");
+
+  const STATS = [
+    { value: 150, suffix: "+", label: t("stats.projects") },
+    { value: 5, suffix: "+", label: t("stats.experience") },
+    { value: 98, suffix: "%", label: t("stats.satisfaction") },
+  ];
+
   const sectionRef = useRef<HTMLElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -70,7 +73,7 @@ export function Hero() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-soft opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-soft" />
           </span>
-          {SITE.role} · {SITE.location}
+          {siteT("role")} · {siteT("location")}
         </motion.span>
 
         <h1 className="flex flex-col text-[16vw] font-extrabold leading-[0.92] tracking-tighter text-foreground sm:text-[11vw] lg:text-[8.5vw]">
@@ -80,7 +83,7 @@ export function Hero() {
             animate={{ y: "0%" }}
             transition={{ duration: 1, delay: 2.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="block">Design.</span>
+            <span className="block">{t("headline1")}</span>
           </motion.span>
           <motion.span
             className="overflow-hidden"
@@ -88,7 +91,7 @@ export function Hero() {
             animate={{ y: "0%" }}
             transition={{ duration: 1, delay: 2.25, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="block font-thin text-foreground/90">Code.</span>
+            <span className="block font-thin text-foreground/90">{t("headline2")}</span>
           </motion.span>
           <motion.span
             className="overflow-hidden"
@@ -97,7 +100,7 @@ export function Hero() {
             transition={{ duration: 1, delay: 2.4, ease: [0.16, 1, 0.3, 1] }}
           >
             <span className="font-serif-italic block font-normal text-blue-soft">
-              Result.
+              {t("headline3")}
             </span>
           </motion.span>
         </h1>
@@ -108,7 +111,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 2.7 }}
           className="mt-10 max-w-lg text-balance text-lg leading-relaxed text-muted"
         >
-          {SITE.description}
+          {siteT("description")}
         </motion.p>
 
         <motion.div
@@ -122,7 +125,7 @@ export function Hero() {
             href="#portfolio"
             className="group rounded-full bg-foreground px-8 py-4 text-sm font-semibold text-background transition-colors hover:bg-blue-soft"
           >
-            View Projects
+            {t("viewProjects")}
             <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
           </MagneticButton>
 
@@ -131,7 +134,7 @@ export function Hero() {
             href="#contact"
             className="group rounded-full border border-line-strong px-8 py-4 text-sm font-semibold text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
           >
-            Contact Me
+            {t("contactMe")}
             <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
           </MagneticButton>
         </motion.div>
@@ -159,7 +162,7 @@ export function Hero() {
         transition={{ duration: 0.7, delay: 3.2 }}
         className="relative mx-auto mb-10 flex flex-col items-center gap-3 text-muted"
       >
-        <span className="text-[11px] uppercase tracking-[0.3em]">Scroll</span>
+        <span className="text-[11px] uppercase tracking-[0.3em]">{t("scroll")}</span>
         <motion.span
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}

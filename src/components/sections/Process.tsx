@@ -3,11 +3,13 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { PROCESS_STEPS } from "@/lib/data/process";
 
 export function Process() {
+  const t = useTranslations("process");
   const timelineRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
@@ -40,10 +42,10 @@ export function Process() {
     <section id="process" className="relative py-32 lg:py-40">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <SectionHeading
-          eyebrow="Process"
-          title="How a project actually gets built"
-          italicWord="built"
-          description="Six stages, zero ambiguity — you always know what's happening and what comes next."
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          italicWord={t("italicWord")}
+          description={t("description")}
         />
 
         <div ref={timelineRef} className="relative mt-20">
@@ -63,10 +65,10 @@ export function Process() {
                   </span>
                   <div className="flex flex-col gap-2 pt-1 sm:pt-2">
                     <h3 className="text-2xl font-bold text-foreground sm:text-3xl">
-                      {step.title}
+                      {t(`steps.${step.id}.title`)}
                     </h3>
                     <p className="max-w-xl text-sm leading-relaxed text-muted sm:text-base">
-                      {step.description}
+                      {t(`steps.${step.id}.description`)}
                     </p>
                   </div>
                 </div>

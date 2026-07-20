@@ -1,9 +1,12 @@
 import { ImageResponse } from "next/og";
 import { SITE } from "@/lib/data/site";
 
+const OG_ROLE = "Full-Stack Web Developer";
+const OG_TAGLINE = "Design. Code. Result.";
+
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = SITE.title;
+export const alt = `${SITE.name} — Premium Web Development Studio`;
 
 export default async function OpengraphImage() {
   return new ImageResponse(
@@ -58,7 +61,7 @@ export default async function OpengraphImage() {
             textTransform: "uppercase",
           }}
         >
-          {SITE.role}
+          {OG_ROLE}
         </div>
 
         <div
@@ -84,7 +87,7 @@ export default async function OpengraphImage() {
             marginTop: 20,
           }}
         >
-          {SITE.tagline}
+          {OG_TAGLINE}
         </div>
       </div>
     ),

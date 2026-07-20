@@ -1,0 +1,459 @@
+{
+  "site": {
+    "role": "Full-Stack Web Developer",
+    "location": "Available worldwide · Remote",
+    "description": "Vladislav is a freelance full-stack web developer crafting premium landing pages, dashboards, corporate websites and Telegram Web Apps for founders and teams who refuse to ship anything average.",
+    "shortDescription": "Premium websites and web apps, designed and engineered end-to-end."
+  },
+  "seo": {
+    "title": "Vladislav — Premium Web Development Studio",
+    "description": "Vladislav is a freelance full-stack web developer crafting premium landing pages, dashboards, corporate websites and Telegram Web Apps for founders and teams who refuse to ship anything average.",
+    "keywords": [
+      "web developer",
+      "freelance developer",
+      "Next.js developer",
+      "landing page design",
+      "dashboard development",
+      "Telegram Web App development",
+      "premium website design",
+      "React developer"
+    ]
+  },
+  "nav": {
+    "about": "About",
+    "skills": "Skills",
+    "services": "Services",
+    "work": "Work",
+    "process": "Process",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "contactMe": "Contact Me",
+    "signIn": "Sign in",
+    "account": "Account",
+    "admin": "Admin",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "footer": {
+    "ctaLine1": "Let's build something",
+    "ctaLine2": "premium.",
+    "navigate": "Navigate",
+    "more": "More",
+    "connect": "Connect",
+    "telegram": "Telegram",
+    "github": "GitHub",
+    "email": "Email",
+    "rights": "© {year} {name}. All rights reserved.",
+    "designedBy": "Designed & built by {name} — {location}"
+  },
+  "hero": {
+    "headline1": "Design.",
+    "headline2": "Code.",
+    "headline3": "Result.",
+    "viewProjects": "View Projects",
+    "contactMe": "Contact Me",
+    "scroll": "Scroll",
+    "stats": {
+      "projects": "Projects delivered",
+      "experience": "Years of experience",
+      "satisfaction": "Client satisfaction"
+    }
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "Crafting digital products that feel premium",
+    "italicWord": "premium",
+    "paragraph1": "I'm {name}, a freelance full-stack developer who partners directly with founders and teams to design and build web products end-to-end — no handoffs, no diluted vision.",
+    "paragraph2": "My background spans landing pages, dashboards, and Telegram Web Apps, but the constant across every project is the same: obsess over the details most developers skip.",
+    "quote": "Good code is invisible. Great design is unforgettable.",
+    "workingWith": "Working with",
+    "philosophy": {
+      "design-first": {
+        "title": "Design-first",
+        "description": "Every build starts as a design problem, not a coding task."
+      },
+      "performance": {
+        "title": "Performance-obsessed",
+        "description": "Fast sites convert better — speed is treated as a feature."
+      },
+      "full-stack": {
+        "title": "Full-stack ownership",
+        "description": "One developer, one vision, from database to pixel."
+      },
+      "partner": {
+        "title": "Long-term partner",
+        "description": "Support doesn't end at launch — it's the start of a relationship."
+      }
+    }
+  },
+  "skills": {
+    "eyebrow": "Skills",
+    "title": "Tools I use to ship fast",
+    "italicWord": "ship",
+    "description": "A modern, type-safe stack chosen for speed of delivery and long-term stability — not just what's trending.",
+    "categories": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "product": "Product & Craft"
+    }
+  },
+  "services": {
+    "eyebrow": "Services",
+    "title": "What I can build for you",
+    "italicWord": "build",
+    "description": "From a single high-converting page to a full internal platform — scoped and built around what your business actually needs.",
+    "items": {
+      "landing-pages": {
+        "title": "Landing Pages",
+        "description": "High-converting single pages built to turn traffic into customers, engineered with motion and copy that guide every scroll toward one action.",
+        "features": ["Conversion-first layout", "Motion storytelling", "A/B ready structure"]
+      },
+      "business-websites": {
+        "title": "Business Websites",
+        "description": "Multi-page sites for growing companies that need a credible, fast, and easy-to-manage presence across every device.",
+        "features": ["CMS-friendly structure", "SEO foundations", "Scalable page templates"]
+      },
+      "corporate-websites": {
+        "title": "Corporate Websites",
+        "description": "Large-scale digital presences for established brands — built for performance, accessibility, and long-term maintainability.",
+        "features": ["Design systems", "Multi-locale ready", "Enterprise-grade QA"]
+      },
+      "dashboards": {
+        "title": "Dashboards",
+        "description": "Data-dense interfaces made effortless to read — real-time charts, tables, and controls designed for daily operational use.",
+        "features": ["Real-time data views", "Role-based access", "Custom charting"]
+      },
+      "telegram-web-apps": {
+        "title": "Telegram Web Apps",
+        "description": "Native-feeling Mini Apps built on the Telegram Bot API and WebApp SDK — from storefronts to internal tools, shipped inside chat.",
+        "features": ["Telegram WebApp SDK", "Bot + backend integration", "Seamless in-chat UX"]
+      },
+      "custom-development": {
+        "title": "Custom Development",
+        "description": "When the brief doesn't fit a template — bespoke web applications engineered from scratch around your exact workflow.",
+        "features": ["Full-stack architecture", "API & integrations", "Long-term ownership"]
+      }
+    }
+  },
+  "portfolio": {
+    "eyebrow": "Portfolio",
+    "title": "Selected work, shipped and live",
+    "italicWord": "live",
+    "description": "A sample of recent case studies across landing pages, dashboards, e-commerce, and Telegram Web Apps.",
+    "items": {
+      "nordholm": {
+        "title": "Nordholm Capital",
+        "category": "Corporate Website",
+        "description": "A confidence-building presence for a private investment firm — restrained typography, real-time market data widgets, and a data room gated behind secure access."
+      },
+      "auravest": {
+        "title": "Auravest Dashboard",
+        "category": "Dashboard",
+        "description": "A portfolio analytics dashboard for retail investors — live positions, risk breakdowns, and custom alerting rendered through streaming WebSocket data."
+      },
+      "loop-market": {
+        "title": "Loop Market",
+        "category": "Business Website",
+        "description": "E-commerce storefront for a direct-to-consumer skincare brand — built for speed, with sub-second product transitions and a checkout tuned for mobile."
+      },
+      "havenly": {
+        "title": "Havenly Stays",
+        "category": "Landing Page",
+        "description": "A single-page launch site for a boutique hospitality brand — cinematic imagery, scroll-driven storytelling, and a waitlist that converted at 12%."
+      },
+      "pulsepay": {
+        "title": "PulsePay Mini App",
+        "category": "Telegram Web App",
+        "description": "A peer-to-peer payments Mini App living entirely inside Telegram — balance management, transfer flows, and biometric-style confirmation, all native-feeling."
+      },
+      "atlasops": {
+        "title": "AtlasOps",
+        "category": "Custom Development",
+        "description": "An internal logistics platform replacing three disconnected spreadsheets — route planning, fleet status, and automated client reporting in one system."
+      }
+    }
+  },
+  "process": {
+    "eyebrow": "Process",
+    "title": "How a project actually gets built",
+    "italicWord": "built",
+    "description": "Six stages, zero ambiguity — you always know what's happening and what comes next.",
+    "steps": {
+      "discovery": {
+        "title": "Discovery",
+        "description": "We start with a deep conversation about your goals, audience, and constraints — clarifying what success actually looks like before anything is designed."
+      },
+      "planning": {
+        "title": "Planning",
+        "description": "Scope, sitemap, and technical architecture are locked in. You get a clear timeline and a shared understanding of every deliverable."
+      },
+      "design": {
+        "title": "Design",
+        "description": "High-fidelity interfaces are crafted around your brand — typography, motion, and layout composed to feel premium on every screen size."
+      },
+      "development": {
+        "title": "Development",
+        "description": "Pixel-accurate, type-safe code brings the design to life — built on a modern stack chosen for speed, stability, and long-term maintainability."
+      },
+      "testing": {
+        "title": "Testing",
+        "description": "Cross-browser, cross-device QA, performance audits, and accessibility checks — nothing ships until it holds up under real conditions."
+      },
+      "launch": {
+        "title": "Launch",
+        "description": "Deployment, monitoring, and a handover walkthrough — plus a window of post-launch support to catch anything real users surface first."
+      }
+    }
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "title": "Investment that scales with scope",
+    "italicWord": "scope",
+    "description": "Transparent, milestone-based pricing — no hidden retainers, no surprise invoices.",
+    "mostPopular": "Most popular",
+    "morePlans": "More Plans",
+    "periods": {
+      "oneTime": "one-time",
+      "quote": "quote"
+    },
+    "plans": {
+      "starter": {
+        "name": "Starter",
+        "description": "A focused, high-impact site for launches and single-product businesses.",
+        "features": [
+          "Up to 5 sections",
+          "Responsive, pixel-perfect build",
+          "On-page SEO foundations",
+          "Scroll & hover animations",
+          "2 rounds of revisions",
+          "2 weeks delivery"
+        ],
+        "cta": "Start a project"
+      },
+      "business": {
+        "name": "Business",
+        "description": "A complete multi-page site with a design system built to grow with you.",
+        "features": [
+          "Up to 10 pages",
+          "Custom design system",
+          "CMS integration",
+          "Advanced motion & micro-interactions",
+          "Analytics & performance setup",
+          "4 rounds of revisions",
+          "4–5 weeks delivery",
+          "30 days post-launch support"
+        ],
+        "cta": "Start a project"
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Dashboards, Telegram Web Apps, and bespoke platforms with full-stack scope.",
+        "features": [
+          "Full-stack architecture",
+          "Custom backend & integrations",
+          "Dashboard / Web App builds",
+          "Dedicated technical planning",
+          "Unlimited revision rounds",
+          "Priority delivery timeline",
+          "90 days post-launch support"
+        ],
+        "cta": "Request a quote"
+      }
+    }
+  },
+  "pricingPage": {
+    "eyebrow": "Pricing",
+    "title": "Six ways to start, one that fits",
+    "italicWord": "fits",
+    "description": "Every plan is milestone-based and scoped up front — pick the tier closest to your needs and refine it together on a discovery call.",
+    "backToHome": "Back to homepage",
+    "customCtaNote": "Contact me for a custom quote.",
+    "mostPopular": "Most popular",
+    "plans": {
+      "starter": {
+        "name": "Starter",
+        "description": "A focused single page for launches, personal brands, and single-product businesses.",
+        "features": [
+          "Single-page build",
+          "Responsive, pixel-perfect design",
+          "On-page SEO basics",
+          "Scroll & hover animations",
+          "1 round of revisions",
+          "1 week delivery"
+        ],
+        "cta": "Start a project"
+      },
+      "growth": {
+        "name": "Growth",
+        "description": "A small multi-page site for businesses ready to establish real credibility online.",
+        "features": [
+          "Up to 5 pages",
+          "Custom UI components",
+          "On-page SEO foundations",
+          "Scroll & hover animations",
+          "2 rounds of revisions",
+          "2 weeks delivery"
+        ],
+        "cta": "Start a project"
+      },
+      "business": {
+        "name": "Business",
+        "description": "A complete multi-page site with a design system built to grow with you.",
+        "features": [
+          "Up to 10 pages",
+          "Custom design system",
+          "CMS integration",
+          "Advanced motion & micro-interactions",
+          "Analytics & performance setup",
+          "4 rounds of revisions",
+          "4–5 weeks delivery",
+          "30 days post-launch support"
+        ],
+        "cta": "Start a project"
+      },
+      "professional": {
+        "name": "Professional",
+        "description": "A larger platform build with custom integrations, accounts, and a scalable content layer.",
+        "features": [
+          "Up to 20 pages",
+          "Custom backend integrations",
+          "User accounts & authentication",
+          "CMS + structured content",
+          "Priority support channel",
+          "6 rounds of revisions",
+          "6–7 weeks delivery",
+          "60 days post-launch support"
+        ],
+        "cta": "Start a project"
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Dashboards, Telegram Web Apps, and bespoke platforms with full-stack scope.",
+        "features": [
+          "Full-stack architecture",
+          "Custom backend & integrations",
+          "Dashboard / Web App builds",
+          "Dedicated technical planning",
+          "Unlimited revision rounds",
+          "Priority delivery timeline",
+          "90 days post-launch support"
+        ],
+        "cta": "Request this plan"
+      },
+      "custom": {
+        "name": "Custom Solution",
+        "description": "Have something bigger in mind? Multi-service platforms, ongoing product work, or a scope that doesn't fit a fixed box.",
+        "features": [
+          "Tailored scope & timeline",
+          "Dedicated project planning",
+          "Flexible engagement model",
+          "Direct ongoing collaboration"
+        ],
+        "cta": "Contact me for a custom quote."
+      }
+    }
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "What clients say",
+    "italicWord": "say",
+    "description": "Feedback from people who've shipped a project end-to-end and lived with the result.",
+    "empty": "Be the first to share your experience.",
+    "writeReview": "Write a review",
+    "form": {
+      "title": "Share your experience",
+      "nameLabel": "Your name",
+      "namePlaceholder": "Jane Doe",
+      "emailLabel": "Your email",
+      "emailHint": "Kept private — only used for moderation, never shown publicly.",
+      "emailPlaceholder": "jane@example.com",
+      "ratingLabel": "Rating",
+      "messageLabel": "Your review",
+      "messagePlaceholder": "Tell us about working together...",
+      "submit": "Submit review",
+      "submitting": "Submitting…",
+      "cancel": "Cancel"
+    },
+    "success": "Your review has been submitted and is awaiting moderation.",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "invalid": "Please check the form — a name, valid email, rating, and a short review are required.",
+      "rateLimited": "You've already submitted a review recently — please try again later."
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Questions, answered",
+    "italicWord": "answered",
+    "description": "Everything you'd want to know before reaching out. Still curious about something else? Just ask.",
+    "items": {
+      "timeline": {
+        "question": "How long does a typical project take?",
+        "answer": "A landing page usually takes 1–2 weeks, a full business website 4–5 weeks, and dashboards or custom platforms 6–10 weeks depending on scope. You'll get a firm timeline after the discovery call, before any work begins."
+      },
+      "process": {
+        "question": "What does the working process look like?",
+        "answer": "Every project follows six stages: discovery, planning, design, development, testing, and launch. You'll see progress at each milestone and approve designs before development starts, so there are no surprises at delivery."
+      },
+      "revisions": {
+        "question": "How many revisions are included?",
+        "answer": "Each plan includes a set number of revision rounds — 2 on Starter, 4 on Business, and unlimited on Premium. Revisions are scoped to refining what's been designed, not reworking the brief mid-project."
+      },
+      "stack": {
+        "question": "What technology do you build with?",
+        "answer": "Next.js and TypeScript for the frontend, Tailwind CSS for styling, and Framer Motion or GSAP for animation. Backends are built with Node.js, PostgreSQL, and Prisma — chosen for performance, type safety, and long-term maintainability."
+      },
+      "maintenance": {
+        "question": "Do you offer support after launch?",
+        "answer": "Yes — every plan includes a post-launch support window (30 days on Business, 90 on Premium) covering bug fixes and small adjustments. Ongoing maintenance and feature retainers are available after that."
+      },
+      "payment": {
+        "question": "How does payment work?",
+        "answer": "Projects are split into milestones — typically 50% upfront to begin, and the remainder on delivery. Larger platform builds are split across three milestones tied to discovery, development, and launch."
+      },
+      "existing-site": {
+        "question": "Can you redesign or rebuild an existing site?",
+        "answer": "Absolutely. Migrations and redesigns start with an audit of your current site's structure, content, and analytics, so nothing that's already working gets lost in the rebuild."
+      }
+    }
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Let's start a conversation",
+    "italicWord": "conversation",
+    "description": "Tell me about your project — timeline, goals, and what 'done' looks like. I reply within one business day.",
+    "sayHello": "Say hello",
+    "methods": {
+      "telegram": "Telegram",
+      "github": "GitHub",
+      "email": "Email"
+    }
+  },
+  "auth": {
+    "title": "Sign in",
+    "subtitle": "No passwords — enter your email and we'll send you a one-time code.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "Send code",
+    "sending": "Sending…",
+    "codeSentTitle": "Check your email",
+    "codeSentSubtitle": "We sent a 6-digit code to {email}.",
+    "codeLabel": "Verification code",
+    "codePlaceholder": "000000",
+    "verify": "Verify & sign in",
+    "verifying": "Verifying…",
+    "changeEmail": "Use a different email",
+    "resend": "Resend code",
+    "backToHome": "Back to homepage",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address.",
+      "sendFailed": "Couldn't send the code. Please try again in a moment.",
+      "rateLimited": "Too many requests — please wait a few minutes before trying again.",
+      "invalidCode": "That code isn't right. Please check and try again.",
+      "expiredCode": "That code has expired — request a new one.",
+      "tooManyAttempts": "Too many incorrect attempts. Please request a new code.",
+      "generic": "Something went wrong. Please try again."
+    }
+  }
+}

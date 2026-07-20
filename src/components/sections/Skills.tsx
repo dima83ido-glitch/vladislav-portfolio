@@ -1,27 +1,30 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { SKILL_GROUPS } from "@/lib/data/skills";
 
 export function Skills() {
+  const t = useTranslations("skills");
+
   return (
     <section id="skills" className="relative py-32 lg:py-40">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <SectionHeading
-          eyebrow="Skills"
-          title="Tools I use to ship fast"
-          italicWord="ship"
-          description="A modern, type-safe stack chosen for speed of delivery and long-term stability — not just what's trending."
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          italicWord={t("italicWord")}
+          description={t("description")}
         />
 
         <div className="mt-20 grid gap-x-12 gap-y-16 lg:grid-cols-3">
           {SKILL_GROUPS.map((group, groupIndex) => (
-            <Reveal key={group.category} variant="up" delay={groupIndex * 0.12}>
+            <Reveal key={group.id} variant="up" delay={groupIndex * 0.12}>
               <div className="flex flex-col gap-8">
                 <h3 className="text-sm font-medium uppercase tracking-[0.25em] text-blue-soft">
-                  {group.category}
+                  {t(`categories.${group.id}`)}
                 </h3>
                 <div className="flex flex-col gap-7">
                   {group.skills.map((skill, skillIndex) => (

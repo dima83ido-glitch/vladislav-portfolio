@@ -1,17 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { FiArrowUpRight, FiMenu, FiX } from "react-icons/fi";
+import { Link } from "@/i18n/navigation";
 import { NAV_LINKS } from "@/lib/data/nav";
 import { SITE } from "@/lib/data/site";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { logout } from "@/lib/auth/actions";
 
-export function Header() {
+type HeaderUser = { email: string; role: "admin" | "customer" } | null;
+
+export function Header({ user = null }: { user?: HeaderUser }) {
+  const t = useTranslations("nav");
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { scrollY } = useScroll();
+
+  async function handleSignOut() {
+    await logout();
+    router.refresh();
+  }
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 24);
@@ -44,22 +57,47 @@ export function Header() {
           <nav className="hidden items-center gap-10 lg:flex">
             {NAV_LINKS.map((link) => (
               <Link
-                key={link.href}
+                key={link.key}
                 href={link.href}
                 className="group relative text-sm font-medium text-muted transition-colors hover:text-foreground"
               >
-                {link.label}
+                {t(link.key)}
                 <span className="absolute -bottom-1 left-0 h-px w-0 bg-blue-soft transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
           </nav>
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-3 lg:flex">
+            <LanguageSwitcher />
+            {user?.role === "admin" ? (
+              <Link
+                href="/admin"
+                className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+              >
+                {t("admin")}
+              </Link>
+            ) : null}
+            {user ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+              >
+                {t("signOut")}
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+              >
+                {t("signIn")}
+              </Link>
+            )}
             <Link
               href="#contact"
               className="group inline-flex items-center gap-2 rounded-full border border-line-strong px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
             >
-              Contact Me
+              {t("contactMe")}
               <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
@@ -87,7 +125,7 @@ export function Header() {
             <nav className="flex flex-col gap-2">
               {NAV_LINKS.map((link, i) => (
                 <motion.div
-                  key={link.href}
+                  key={link.key}
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 + i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -97,11 +135,49 @@ export function Header() {
                     onClick={() => setIsMenuOpen(false)}
                     className="block py-3 text-4xl font-extrabold tracking-tight text-foreground"
                   >
-                    {link.label}
+                    {t(link.key)}
                   </Link>
                 </motion.div>
               ))}
             </nav>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + NAV_LINKS.length * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-8 flex flex-wrap items-center gap-4"
+            >
+              <LanguageSwitcher />
+              {user?.role === "admin" ? (
+                <Link
+                  href="/admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+                >
+                  {t("admin")}
+                </Link>
+              ) : null}
+              {user ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleSignOut();
+                  }}
+                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+                >
+                  {t("signOut")}
+                </button>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-sm font-medium text-muted transition-colors hover:text-foreground"
+                >
+                  {t("signIn")}
+                </Link>
+              )}
+            </motion.div>
           </motion.div>
         ) : null}
       </AnimatePresence>

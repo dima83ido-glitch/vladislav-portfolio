@@ -1,84 +1,56 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { FiCheck } from "react-icons/fi";
+import { useTranslations } from "next-intl";
+import { FiArrowUpRight } from "react-icons/fi";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { PricingCard } from "@/components/ui/PricingCard";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { PRICING_PLANS } from "@/lib/data/pricing";
-import { cn } from "@/lib/utils";
 
 export function Pricing() {
+  const t = useTranslations("pricing");
+
   return (
     <section id="pricing" className="relative py-32 lg:py-40">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <SectionHeading
-          eyebrow="Pricing"
-          title="Investment that scales with scope"
-          italicWord="scope"
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          italicWord={t("italicWord")}
           align="center"
-          description="Transparent, milestone-based pricing — no hidden retainers, no surprise invoices."
+          description={t("description")}
           className="mx-auto items-center text-center"
         />
 
         <div className="mt-20 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-center">
           {PRICING_PLANS.map((plan, i) => (
             <Reveal key={plan.id} variant="up" delay={i * 0.1}>
-              <motion.div
-                whileHover={{ y: -8 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className={cn(
-                  "relative flex h-full flex-col gap-8 rounded-3xl border p-9",
-                  plan.highlighted
-                    ? "border-blue-soft/60 bg-surface lg:scale-105 lg:py-12"
-                    : "border-line bg-surface/50"
-                )}
-              >
-                {plan.highlighted ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-soft px-4 py-1 text-xs font-semibold text-background">
-                    Most popular
-                  </span>
-                ) : null}
-
-                <div className="flex flex-col gap-2">
-                  <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
-                  <p className="text-sm leading-relaxed text-muted">
-                    {plan.description}
-                  </p>
-                </div>
-
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-                    {plan.price}
-                  </span>
-                  <span className="text-sm text-muted">/ {plan.period}</span>
-                </div>
-
-                <ul className="flex flex-1 flex-col gap-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3 text-sm text-foreground/80">
-                      <FiCheck className="mt-0.5 shrink-0 text-blue-soft" size={15} />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                <MagneticButton
-                  as="a"
-                  href="#contact"
-                  className={cn(
-                    "w-full rounded-full px-6 py-3.5 text-sm font-semibold transition-colors",
-                    plan.highlighted
-                      ? "bg-blue-soft text-background hover:bg-blue-soft/90"
-                      : "border border-line-strong text-foreground hover:border-blue-soft hover:text-blue-soft"
-                  )}
-                >
-                  {plan.cta}
-                </MagneticButton>
-              </motion.div>
+              <PricingCard
+                name={t(`plans.${plan.id}.name`)}
+                description={t(`plans.${plan.id}.description`)}
+                price={plan.price}
+                period={t(`periods.${plan.periodKey}`)}
+                features={t.raw(`plans.${plan.id}.features`)}
+                cta={t(`plans.${plan.id}.cta`)}
+                ctaHref="#contact"
+                highlighted={plan.highlighted}
+                mostPopularLabel={t("mostPopular")}
+              />
             </Reveal>
           ))}
         </div>
+
+        <Reveal variant="up" delay={0.3} className="mt-14 flex justify-center">
+          <MagneticButton
+            as="link"
+            href="/pricing"
+            className="group rounded-full border border-line-strong px-8 py-4 text-sm font-semibold text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
+          >
+            {t("morePlans")}
+            <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </MagneticButton>
+        </Reveal>
       </div>
     </section>
   );

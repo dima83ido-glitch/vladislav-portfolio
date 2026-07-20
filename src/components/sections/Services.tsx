@@ -1,20 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { FiCheck } from "react-icons/fi";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { SERVICES } from "@/lib/data/services";
 
 export function Services() {
+  const t = useTranslations("services");
+
   return (
     <section id="services" className="relative py-32 lg:py-40">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <SectionHeading
-          eyebrow="Services"
-          title="What I can build for you"
-          italicWord="build"
-          description="From a single high-converting page to a full internal platform — scoped and built around what your business actually needs."
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          italicWord={t("italicWord")}
+          description={t("description")}
         />
 
         <div className="mt-20 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -38,15 +41,15 @@ export function Services() {
 
                 <div className="relative flex flex-col gap-3">
                   <h3 className="text-xl font-bold text-foreground">
-                    {service.title}
+                    {t(`items.${service.id}.title`)}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted">
-                    {service.description}
+                    {t(`items.${service.id}.description`)}
                   </p>
                 </div>
 
                 <ul className="relative mt-auto flex flex-col gap-2 border-t border-line pt-5">
-                  {service.features.map((feature) => (
+                  {t.raw(`items.${service.id}.features`).map((feature: string) => (
                     <li
                       key={feature}
                       className="flex items-center gap-2 text-xs text-foreground/70"

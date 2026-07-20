@@ -1,15 +1,15 @@
 export type NavLink = {
-  label: string;
+  key: string;
   href: string;
 };
 
 export const NAV_LINKS: NavLink[] = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Services", href: "#services" },
-  { label: "Work", href: "#portfolio" },
-  { label: "Process", href: "#process" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact" },
+  { key: "about", href: "#about" },
+  { key: "skills", href: "#skills" },
+  { key: "services", href: "#services" },
+  { key: "work", href: "#portfolio" },
+  { key: "process", href: "#process" },
+  { key: "pricing", href: "#pricing" },
+  { key: "faq", href: "#faq" },
+  { key: "contact", href: "#contact" },
 ];
