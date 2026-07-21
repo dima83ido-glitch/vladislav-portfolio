@@ -24,6 +24,7 @@ export function OrderMessages({
   const t = useTranslations("account.orders.detail");
   const [body, setBody] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -31,13 +32,17 @@ export function OrderMessages({
     if (isPending || !body.trim()) return;
 
     setIsPending(true);
+    setError(null);
     const result = await postOrderMessage({ orderId, body });
     setIsPending(false);
 
-    if (result.ok) {
-      setBody("");
-      router.refresh();
+    if (!result.ok) {
+      setError(t(`errors.${result.error}`));
+      return;
     }
+
+    setBody("");
+    router.refresh();
   }
 
   return (
@@ -78,6 +83,7 @@ export function OrderMessages({
           {t("send")}
         </MagneticButton>
       </form>
+      {error ? <p className="text-sm text-red-400">{error}</p> : null}
     </div>
   );
 }

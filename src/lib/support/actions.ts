@@ -10,6 +10,8 @@ import { createTicketSchema, replySchema } from "./validation";
 
 const TICKET_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const TICKET_RATE_LIMIT = 5;
+const REPLY_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const REPLY_RATE_LIMIT = 20;
 
 export async function createTicket(
   input: unknown
@@ -69,7 +71,9 @@ async function assertTicketAccess(ticketId: string, userId: string, isAdmin: boo
 
 export async function replyToTicket(
   input: unknown
-): Promise<{ ok: true } | { ok: false; error: "invalid" | "forbidden" | "generic" }> {
+): Promise<
+  { ok: true } | { ok: false; error: "invalid" | "forbidden" | "rateLimited" | "generic" }
+> {
   const session = await requireUser().catch(() => null);
   if (!session) {
     return { ok: false, error: "invalid" };
@@ -84,6 +88,15 @@ export async function replyToTicket(
   const hasAccess = await assertTicketAccess(parsed.data.ticketId, session.user.id, isAdmin);
   if (!hasAccess) {
     return { ok: false, error: "forbidden" };
+  }
+
+  const { limited } = await checkRateLimit(
+    `ticket-reply:${session.user.id}`,
+    REPLY_RATE_LIMIT,
+    REPLY_RATE_LIMIT_WINDOW_MS
+  );
+  if (limited) {
+    return { ok: false, error: "rateLimited" };
   }
 
   try {

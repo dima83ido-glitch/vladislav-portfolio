@@ -5,11 +5,17 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { destroyOtherSessions, requireUser } from "@/lib/auth/session";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { updateProfileSchema } from "./validation";
+
+const PROFILE_UPDATE_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+const PROFILE_UPDATE_RATE_LIMIT = 10;
 
 export async function updateProfile(
   input: unknown
-): Promise<{ ok: true } | { ok: false; error: "invalid" | "usernameTaken" | "generic" }> {
+): Promise<
+  { ok: true } | { ok: false; error: "invalid" | "usernameTaken" | "rateLimited" | "generic" }
+> {
   const session = await requireUser().catch(() => null);
   if (!session) {
     return { ok: false, error: "invalid" };
@@ -18,6 +24,15 @@ export async function updateProfile(
   const parsed = updateProfileSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: "invalid" };
+  }
+
+  const { limited } = await checkRateLimit(
+    `profile-update:${session.user.id}`,
+    PROFILE_UPDATE_RATE_LIMIT,
+    PROFILE_UPDATE_RATE_LIMIT_WINDOW_MS
+  );
+  if (limited) {
+    return { ok: false, error: "rateLimited" };
   }
 
   try {

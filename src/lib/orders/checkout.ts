@@ -3,8 +3,12 @@
 import { getDb } from "@/db/client";
 import { orders } from "@/db/schema";
 import { requireUser } from "@/lib/auth/session";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { PRICING_PLANS, PRICING_PLANS_FULL } from "@/lib/data/pricing";
 import { getPlanBySlug } from "@/db/queries/pricingPlans";
+
+const ORDER_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+const ORDER_RATE_LIMIT = 10;
 
 type PlanSource = "home" | "full";
 
@@ -39,7 +43,10 @@ async function resolvePlan(
 export async function createOrderFromPlan(
   source: PlanSource,
   planId: string
-): Promise<{ ok: true; orderId: string } | { ok: false; error: "unauthorized" | "invalidPlan" | "generic" }> {
+): Promise<
+  | { ok: true; orderId: string }
+  | { ok: false; error: "unauthorized" | "invalidPlan" | "rateLimited" | "generic" }
+> {
   const session = await requireUser().catch(() => null);
   if (!session) {
     return { ok: false, error: "unauthorized" };
@@ -48,6 +55,15 @@ export async function createOrderFromPlan(
   const plan = await resolvePlan(source, planId);
   if (!plan) {
     return { ok: false, error: "invalidPlan" };
+  }
+
+  const { limited } = await checkRateLimit(
+    `order-create:${session.user.id}`,
+    ORDER_RATE_LIMIT,
+    ORDER_RATE_LIMIT_WINDOW_MS
+  );
+  if (limited) {
+    return { ok: false, error: "rateLimited" };
   }
 
   try {

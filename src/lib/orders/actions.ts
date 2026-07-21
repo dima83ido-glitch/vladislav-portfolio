@@ -5,7 +5,11 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { orderMessages, orders } from "@/db/schema";
 import { requireUser } from "@/lib/auth/session";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { orderMessageSchema } from "./validation";
+
+const MESSAGE_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const MESSAGE_RATE_LIMIT = 20;
 
 async function assertOrderAccess(orderId: string, userId: string, isAdmin: boolean) {
   if (isAdmin) return true;
@@ -19,7 +23,9 @@ async function assertOrderAccess(orderId: string, userId: string, isAdmin: boole
 
 export async function postOrderMessage(
   input: unknown
-): Promise<{ ok: true } | { ok: false; error: "invalid" | "forbidden" | "generic" }> {
+): Promise<
+  { ok: true } | { ok: false; error: "invalid" | "forbidden" | "rateLimited" | "generic" }
+> {
   const session = await requireUser().catch(() => null);
   if (!session) {
     return { ok: false, error: "invalid" };
@@ -34,6 +40,15 @@ export async function postOrderMessage(
   const hasAccess = await assertOrderAccess(parsed.data.orderId, session.user.id, isAdmin);
   if (!hasAccess) {
     return { ok: false, error: "forbidden" };
+  }
+
+  const { limited } = await checkRateLimit(
+    `order-message:${session.user.id}`,
+    MESSAGE_RATE_LIMIT,
+    MESSAGE_RATE_LIMIT_WINDOW_MS
+  );
+  if (limited) {
+    return { ok: false, error: "rateLimited" };
   }
 
   try {

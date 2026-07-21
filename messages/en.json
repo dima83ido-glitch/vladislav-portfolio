@@ -224,6 +224,7 @@
     "genericQuoteCta": "Contact me for a custom quote",
     "errors": {
       "invalidPlan": "That plan isn't available right now.",
+      "rateLimited": "Too many attempts — please wait a moment and try again.",
       "generic": "Something went wrong. Please try again."
     },
     "periods": {
@@ -287,7 +288,12 @@
     "genericQuoteCta": "Contact me for a custom quote",
     "errors": {
       "invalidPlan": "That plan isn't available right now.",
+      "rateLimited": "Too many attempts — please wait a moment and try again.",
       "generic": "Something went wrong. Please try again."
+    },
+    "periods": {
+      "oneTime": "one-time",
+      "quote": "quote"
     },
     "plans": {
       "starter": {
@@ -511,6 +517,7 @@
       "errors": {
         "invalid": "Please check your display name and username.",
         "usernameTaken": "That username is already taken.",
+        "rateLimited": "Too many updates — please wait a moment and try again.",
         "generic": "Something went wrong. Please try again."
       }
     },
@@ -538,7 +545,13 @@
         "send": "Send",
         "filesTitle": "Files",
         "noFiles": "No files yet.",
-        "invoice": "View invoice"
+        "invoice": "View invoice",
+        "errors": {
+          "invalid": "Please enter a message.",
+          "forbidden": "You don't have access to this order.",
+          "rateLimited": "You're sending messages too quickly — please wait a moment.",
+          "generic": "Something went wrong. Please try again."
+        }
       },
       "invoice": {
         "title": "Invoice",

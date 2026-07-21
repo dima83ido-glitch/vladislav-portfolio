@@ -22,8 +22,10 @@ export function TicketThread({
   isClosed: boolean;
 }) {
   const t = useTranslations("account.support.thread");
+  const errorT = useTranslations("account.support.errors");
   const [body, setBody] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -31,13 +33,17 @@ export function TicketThread({
     if (isPending || !body.trim()) return;
 
     setIsPending(true);
+    setError(null);
     const result = await replyToTicket({ ticketId, body });
     setIsPending(false);
 
-    if (result.ok) {
-      setBody("");
-      router.refresh();
+    if (!result.ok) {
+      setError(errorT(result.error));
+      return;
     }
+
+    setBody("");
+    router.refresh();
   }
 
   return (
@@ -72,22 +78,25 @@ export function TicketThread({
       {isClosed ? (
         <p className="text-sm text-muted">{t("closed")}</p>
       ) : (
-        <form onSubmit={handleSubmit} className="flex gap-3">
-          <input
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder={t("replyPlaceholder")}
-            className="flex-1 rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
-          />
-          <MagneticButton
-            as="button"
-            type="submit"
-            disabled={isPending}
-            className="rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft"
-          >
-            {t("send")}
-          </MagneticButton>
-        </form>
+        <div className="flex flex-col gap-2">
+          <form onSubmit={handleSubmit} className="flex gap-3">
+            <input
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder={t("replyPlaceholder")}
+              className="flex-1 rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
+            />
+            <MagneticButton
+              as="button"
+              type="submit"
+              disabled={isPending}
+              className="rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft"
+            >
+              {t("send")}
+            </MagneticButton>
+          </form>
+          {error ? <p className="text-sm text-red-400">{error}</p> : null}
+        </div>
       )}
     </div>
   );
