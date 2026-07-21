@@ -1,7 +1,9 @@
 import { hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { FiArrowLeft } from "react-icons/fi";
 import { routing } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
 import { requireUserOrRedirect } from "@/lib/auth/session";
 import { getOrderForUser } from "@/db/queries/orders";
 import { CryptoPaymentForm } from "@/components/account/CryptoPaymentForm";
@@ -17,5 +19,18 @@ export default async function CryptoPaymentPage({ params }: PageProps) {
   const order = await getOrderForUser(id, session.user.id);
   if (!order || order.status !== "pending_payment") notFound();
 
-  return <CryptoPaymentForm orderId={order.id} />;
+  const t = await getTranslations("account.orders");
+
+  return (
+    <div className="flex flex-col gap-6">
+      <Link
+        href={`/account/orders/${order.id}`}
+        className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-muted transition-colors hover:text-blue-soft"
+      >
+        <FiArrowLeft size={13} />
+        {t("detail.backToOrder")}
+      </Link>
+      <CryptoPaymentForm orderId={order.id} />
+    </div>
+  );
 }

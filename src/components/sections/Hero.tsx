@@ -78,9 +78,9 @@ export function Hero({ stats }: { stats?: HeroStat[] }) {
           {siteT("role")} · {siteT("location")}
         </motion.span>
 
-        <h1 className="flex flex-col text-[16vw] font-extrabold leading-[0.92] tracking-tighter text-foreground sm:text-[11vw] lg:text-[8.5vw]">
+        <h1 className="flex flex-col text-[16vw] font-extrabold leading-[0.98] tracking-tighter text-foreground sm:text-[11vw] lg:text-[8.5vw]">
           <motion.span
-            className="overflow-hidden"
+            className="overflow-hidden pb-[0.12em]"
             initial={{ y: "110%" }}
             animate={{ y: "0%" }}
             transition={{ duration: 1, delay: 2.1, ease: [0.16, 1, 0.3, 1] }}
@@ -88,7 +88,7 @@ export function Hero({ stats }: { stats?: HeroStat[] }) {
             <span className="block">{t("headline1")}</span>
           </motion.span>
           <motion.span
-            className="overflow-hidden"
+            className="overflow-hidden pb-[0.12em]"
             initial={{ y: "110%" }}
             animate={{ y: "0%" }}
             transition={{ duration: 1, delay: 2.25, ease: [0.16, 1, 0.3, 1] }}
@@ -96,7 +96,7 @@ export function Hero({ stats }: { stats?: HeroStat[] }) {
             <span className="block font-thin text-foreground/90">{t("headline2")}</span>
           </motion.span>
           <motion.span
-            className="overflow-hidden"
+            className="overflow-hidden pb-[0.12em]"
             initial={{ y: "110%" }}
             animate={{ y: "0%" }}
             transition={{ duration: 1, delay: 2.4, ease: [0.16, 1, 0.3, 1] }}

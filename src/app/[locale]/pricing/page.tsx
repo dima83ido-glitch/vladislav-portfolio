@@ -5,6 +5,7 @@ import { routing } from "@/i18n/routing";
 import { PricingGrid } from "@/components/sections/PricingGrid";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GlowBackground } from "@/components/ui/GlowBackground";
+import { BackButton } from "@/components/ui/BackButton";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -22,12 +23,14 @@ export default async function PricingPage({ params }: PageProps) {
   setRequestLocale(locale);
 
   const t = await getTranslations("pricingPage");
+  const commonT = await getTranslations("common");
 
   return (
     <section className="relative overflow-hidden py-32 lg:py-40">
       <GlowBackground variant="section" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-12">
+        <BackButton label={commonT("back")} className="mb-10" />
         <SectionHeading
           eyebrow={t("eyebrow")}
           title={t("title")}

@@ -62,7 +62,8 @@ export async function requestCode(
 
 export async function verifyCode(
   rawEmail: string,
-  rawCode: string
+  rawCode: string,
+  rememberMe = false
 ): Promise<ActionResult<"invalidCode" | "expiredCode" | "tooManyAttempts">> {
   const parsed = emailSchema.safeParse(rawEmail);
   const code = rawCode.trim();
@@ -136,7 +137,7 @@ export async function verifyCode(
     return { ok: false, error: "invalidCode" };
   }
 
-  await createSession(user.id);
+  await createSession(user.id, rememberMe);
 
   return { ok: true };
 }

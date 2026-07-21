@@ -40,7 +40,11 @@
     "support": "Support",
     "leaveReview": "Leave Review",
     "settings": "Settings",
-    "adminDashboard": "Admin Dashboard"
+    "adminDashboard": "Admin Dashboard",
+    "startProject": "Start a New Project"
+  },
+  "common": {
+    "back": "Back"
   },
   "footer": {
     "ctaLine1": "Let's build something",
@@ -457,6 +461,7 @@
     "subtitle": "No passwords — enter your email and we'll send you a one-time code.",
     "emailLabel": "Email address",
     "emailPlaceholder": "you@example.com",
+    "rememberMe": "Remember me on this device",
     "sendCode": "Send code",
     "sending": "Sending…",
     "codeSentTitle": "Check your email",
@@ -494,6 +499,8 @@
       "accountStatus": "Account status",
       "statusActive": "Active",
       "statusSuspended": "Suspended",
+      "startProject": "Start a New Project",
+      "startProjectDescription": "Choose a plan and we'll have your order set up in minutes.",
       "stats": {
         "completedOrders": "Completed orders",
         "currentOrders": "Current orders",
@@ -540,6 +547,7 @@
       "progress": "Progress",
       "detail": {
         "back": "Back to orders",
+        "backToOrder": "Back to order",
         "messagesTitle": "Messages",
         "messagePlaceholder": "Write a message...",
         "send": "Send",

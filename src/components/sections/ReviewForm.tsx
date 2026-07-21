@@ -7,6 +7,7 @@ import { FiStar, FiX } from "react-icons/fi";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useRouter } from "@/i18n/navigation";
 import { submitReview } from "@/lib/reviews/actions";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 export function ReviewsWriteButton({ isLoggedIn }: { isLoggedIn: boolean }) {
   const t = useTranslations("reviews");
@@ -18,6 +19,8 @@ export function ReviewsWriteButton({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
+
+  useScrollLock(isOpen);
 
   function close() {
     setIsOpen(false);

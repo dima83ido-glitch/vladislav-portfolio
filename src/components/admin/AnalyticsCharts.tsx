@@ -39,6 +39,27 @@ export function RevenueChart({ data }: { data: { day: string; total: number }[] 
   );
 }
 
+export function OrdersChart({ data }: { data: { day: string; count: number }[] }) {
+  if (data.length === 0) {
+    return <p className="text-sm text-muted">No orders yet.</p>;
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height={260}>
+      <BarChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#1c2333" />
+        <XAxis dataKey="day" stroke="#8a90a6" fontSize={11} />
+        <YAxis stroke="#8a90a6" fontSize={11} allowDecimals={false} />
+        <Tooltip
+          contentStyle={{ background: "#0d1120", border: "1px solid #1c2333", borderRadius: 8 }}
+          formatter={(value) => [value, "Orders"]}
+        />
+        <Bar dataKey="count" fill="#7aa2ff" radius={[6, 6, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function PaymentMethodChart({ data }: { data: { method: string; count: number }[] }) {
   if (data.length === 0) {
     return <p className="text-sm text-muted">No approved payments yet.</p>;

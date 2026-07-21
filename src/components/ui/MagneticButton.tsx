@@ -69,7 +69,7 @@ export function MagneticButton({
     animate: { x: offset.x, y: offset.y },
     transition: { type: "spring", stiffness: 150, damping: 12, mass: 0.4 },
     className: cn(
-      "inline-flex items-center justify-center",
+      "inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       disabled && "pointer-events-none opacity-60",
       className
     ),

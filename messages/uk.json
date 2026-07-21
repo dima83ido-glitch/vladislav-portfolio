@@ -40,7 +40,11 @@
     "support": "Підтримка",
     "leaveReview": "Залишити відгук",
     "settings": "Налаштування",
-    "adminDashboard": "Адмін-панель"
+    "adminDashboard": "Адмін-панель",
+    "startProject": "Почати новий проєкт"
+  },
+  "common": {
+    "back": "Назад"
   },
   "footer": {
     "ctaLine1": "Створімо щось",
@@ -457,6 +461,7 @@
     "subtitle": "Без паролів — введіть email, і ми надішлемо одноразовий код.",
     "emailLabel": "Електронна пошта",
     "emailPlaceholder": "you@example.com",
+    "rememberMe": "Запам'ятати мене на цьому пристрої",
     "sendCode": "Надіслати код",
     "sending": "Надсилаємо…",
     "codeSentTitle": "Перевірте пошту",
@@ -494,6 +499,8 @@
       "accountStatus": "Статус акаунта",
       "statusActive": "Активний",
       "statusSuspended": "Заблокований",
+      "startProject": "Почати новий проєкт",
+      "startProjectDescription": "Оберіть план, і ми оформимо ваше замовлення за кілька хвилин.",
       "stats": {
         "completedOrders": "Завершені замовлення",
         "currentOrders": "Активні замовлення",
@@ -540,6 +547,7 @@
       "progress": "Прогрес",
       "detail": {
         "back": "До замовлень",
+        "backToOrder": "Назад до замовлення",
         "messagesTitle": "Повідомлення",
         "messagePlaceholder": "Напишіть повідомлення...",
         "send": "Надіслати",

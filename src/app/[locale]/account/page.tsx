@@ -1,7 +1,9 @@
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { FiArrowUpRight } from "react-icons/fi";
 import { routing } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
 import { requireUserOrRedirect } from "@/lib/auth/session";
 import { getOrderStats } from "@/db/queries/orders";
 import { initials } from "@/lib/utils";
@@ -69,6 +71,20 @@ export default async function ProfilePage({ params }: PageProps) {
           initialUsername={session.user.username}
         />
       </div>
+
+      <Link
+        href="/pricing"
+        className="group relative flex flex-col gap-2 overflow-hidden rounded-3xl bg-gradient-to-br from-blue-soft to-blue px-8 py-8 text-background shadow-lg shadow-blue-glow/30 transition-transform duration-300 hover:scale-[1.01] sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex flex-col gap-1">
+          <span className="text-lg font-bold">{t("startProject")}</span>
+          <span className="text-sm text-background/80">{t("startProjectDescription")}</span>
+        </div>
+        <span className="mt-4 inline-flex items-center gap-2 self-start rounded-full bg-background/15 px-6 py-3 text-sm font-semibold sm:mt-0">
+          {t("startProject")}
+          <FiArrowUpRight className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+        </span>
+      </Link>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[

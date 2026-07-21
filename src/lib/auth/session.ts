@@ -7,16 +7,27 @@ import { getDb } from "@/db/client";
 import { sessions, users } from "@/db/schema";
 
 const SESSION_COOKIE = "session";
-const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const REMEMBER_ME_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const DEFAULT_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 
 function hashToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export async function createSession(userId: string) {
+/**
+ * `rememberMe` controls both how long the session stays valid server-side
+ * and whether the cookie survives a browser restart:
+ *  - true: 30-day DB session + a persistent cookie (`expires` set).
+ *  - false: 1-day DB session (bounds how long an indefinitely-open tab can
+ *    stay signed in) + a browser-session cookie (`expires` omitted, so it's
+ *    cleared when the browser closes).
+ * httpOnly/secure/sameSite are unchanged in both cases.
+ */
+export async function createSession(userId: string, rememberMe = false) {
   const token = randomBytes(32).toString("hex");
   const tokenHash = hashToken(token);
-  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+  const ttlMs = rememberMe ? REMEMBER_ME_TTL_MS : DEFAULT_SESSION_TTL_MS;
+  const expiresAt = new Date(Date.now() + ttlMs);
 
   await getDb().insert(sessions).values({ tokenHash, userId, expiresAt });
 
@@ -26,7 +37,7 @@ export async function createSession(userId: string) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    expires: expiresAt,
+    ...(rememberMe ? { expires: expiresAt } : {}),
   });
 }
 

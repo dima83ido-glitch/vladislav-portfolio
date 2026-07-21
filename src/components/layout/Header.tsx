@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { FiMenu, FiX } from "react-icons/fi";
@@ -10,6 +10,7 @@ import { SITE } from "@/lib/data/site";
 import { cn } from "@/lib/utils";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { UserPanel } from "@/components/layout/UserPanel";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type HeaderUser = {
   email: string;
@@ -27,10 +28,7 @@ export function Header({ user = null }: { user?: HeaderUser }) {
     setIsScrolled(latest > 24);
   });
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("overflow-hidden", isMenuOpen);
-    return () => document.documentElement.classList.remove("overflow-hidden");
-  }, [isMenuOpen]);
+  useScrollLock(isMenuOpen);
 
   return (
     <>

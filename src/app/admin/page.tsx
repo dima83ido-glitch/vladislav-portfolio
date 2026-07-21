@@ -1,40 +1,88 @@
 import Link from "next/link";
-import { getOverviewStats } from "@/db/queries/analytics";
+import { getLatestOrders, getOrdersByDay, getOverviewStats, getRevenueByDay } from "@/db/queries/analytics";
+import { OrdersChart, RevenueChart } from "@/components/admin/AnalyticsCharts";
+import { LatestOrdersTable } from "@/components/admin/LatestOrdersTable";
+
+function formatCents(cents: number) {
+  return `$${(cents / 100).toLocaleString()}`;
+}
 
 export default async function AdminOverviewPage() {
-  const stats = await getOverviewStats();
+  const [stats, revenue, ordersByDay, latestOrders] = await Promise.all([
+    getOverviewStats(),
+    getRevenueByDay(30),
+    getOrdersByDay(30),
+    getLatestOrders(10),
+  ]);
 
-  const tiles = [
+  const salesStats = [
+    { label: "Total revenue", value: formatCents(stats.totalRevenueCents) },
+    { label: "Today's revenue", value: formatCents(stats.todayRevenueCents) },
+    { label: "Monthly revenue", value: formatCents(stats.monthRevenueCents) },
+    { label: "Avg. order value", value: formatCents(stats.avgOrderValueCents) },
+    { label: "Completed orders", value: stats.completedOrders },
+    { label: "Pending orders", value: stats.pendingOrders },
+    { label: "Cancelled orders", value: stats.cancelledOrders },
+    { label: "Conversion rate", value: `${stats.conversionRate}%` },
+  ];
+
+  const attentionTiles = [
     { label: "Pending reviews", value: stats.pendingReviews, href: "/admin/reviews?status=pending" },
     { label: "Awaiting payment confirmation", value: stats.pendingPayments, href: "/admin/payments" },
     { label: "Open support tickets", value: stats.openTickets, href: "/admin/support" },
-    { label: "Total orders", value: stats.totalOrders, href: "/admin/analytics" },
     { label: "Total users", value: stats.totalUsers, href: "/admin/users" },
-    {
-      label: "Total revenue",
-      value: `$${(stats.totalRevenueCents / 100).toLocaleString()}`,
-      href: "/admin/analytics",
-    },
   ];
 
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
-        <p className="mt-1 text-sm text-muted">A quick look at what needs attention.</p>
+        <h1 className="text-2xl font-bold tracking-tight">Sales Dashboard</h1>
+        <p className="mt-1 text-sm text-muted">
+          {stats.totalOrders} orders total · {formatCents(stats.totalRevenueCents)} lifetime revenue
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tiles.map((tile) => (
-          <Link
-            key={tile.label}
-            href={tile.href}
-            className="rounded-2xl border border-line bg-surface/60 p-6 transition-colors hover:border-blue-soft/50"
-          >
-            <span className="text-3xl font-extrabold tracking-tight text-foreground">{tile.value}</span>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {salesStats.map((tile) => (
+          <div key={tile.label} className="rounded-2xl border border-line bg-surface/60 p-6">
+            <span className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+              {tile.value}
+            </span>
             <p className="mt-1 text-sm text-muted">{tile.label}</p>
-          </Link>
+          </div>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-2xl border border-line bg-surface/60 p-6">
+          <h2 className="mb-4 text-sm font-semibold text-foreground">Revenue, last 30 days</h2>
+          <RevenueChart data={revenue} />
+        </div>
+        <div className="rounded-2xl border border-line bg-surface/60 p-6">
+          <h2 className="mb-4 text-sm font-semibold text-foreground">Orders, last 30 days</h2>
+          <OrdersChart data={ordersByDay} />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-line bg-surface/60 p-6">
+        <h2 className="mb-4 text-sm font-semibold text-foreground">Latest orders</h2>
+        <LatestOrdersTable rows={latestOrders} />
+      </div>
+
+      <div>
+        <h2 className="mb-4 text-sm font-semibold text-foreground">Needs attention</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {attentionTiles.map((tile) => (
+            <Link
+              key={tile.label}
+              href={tile.href}
+              className="rounded-2xl border border-line bg-surface/60 p-6 transition-colors hover:border-blue-soft/50"
+            >
+              <span className="text-3xl font-extrabold tracking-tight text-foreground">{tile.value}</span>
+              <p className="mt-1 text-sm text-muted">{tile.label}</p>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

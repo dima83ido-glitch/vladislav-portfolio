@@ -4,10 +4,10 @@ import { useState, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
-import { FiArrowLeft, FiArrowUpRight } from "react-icons/fi";
+import { FiArrowUpRight } from "react-icons/fi";
 import { GlowBackground } from "@/components/ui/GlowBackground";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { Link } from "@/i18n/navigation";
+import { BackButton } from "@/components/ui/BackButton";
 import { requestCode, verifyCode } from "@/lib/auth/actions";
 
 type Step = "email" | "code";
@@ -25,6 +25,7 @@ export function LoginForm({
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
@@ -46,7 +47,7 @@ export function LoginForm({
     if (isPending) return;
     setErrorKey(null);
     setIsPending(true);
-    const result = await verifyCode(email, code);
+    const result = await verifyCode(email, code, rememberMe);
     setIsPending(false);
 
     if (!result.ok) {
@@ -71,13 +72,7 @@ export function LoginForm({
       <GlowBackground variant="section" />
 
       <div className="relative">
-        <Link
-          href="/"
-          className="mb-8 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-muted transition-colors hover:text-blue-soft"
-        >
-          <FiArrowLeft size={13} />
-          {t("backToHome")}
-        </Link>
+        <BackButton label={t("backToHome")} className="mb-8" />
 
         <AnimatePresence mode="wait">
           {step === "email" ? (
@@ -111,6 +106,16 @@ export function LoginForm({
                   className="rounded-xl border border-line-strong bg-background px-4 py-3.5 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
                 />
               </div>
+
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm text-muted select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 rounded border-line-strong bg-background text-blue-soft accent-blue-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft"
+                />
+                {t("rememberMe")}
+              </label>
 
               {errorKey ? (
                 <p className="text-sm text-red-400">{t(`errors.${errorKey}`)}</p>
