@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
   compress: true,
   images: {
     formats: ["image/avif", "image/webp"],
+    // Admin-uploaded portfolio images are served from Cloudinary once
+    // CLOUDINARY_* is configured — next/image refuses to optimize an
+    // external host unless it's explicitly allow-listed.
+    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
   },
   experimental: {
     serverActions: {

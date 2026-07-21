@@ -1,0 +1,16 @@
+import { notFound } from "next/navigation";
+import { getSkillGroupById } from "@/db/queries/content";
+import { SkillGroupForm } from "@/components/admin/SkillGroupForm";
+
+export default async function EditSkillGroupPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const group = await getSkillGroupById(id);
+  if (!group) notFound();
+
+  return (
+    <div className="flex flex-col gap-6">
+      <h1 className="text-2xl font-bold tracking-tight">Edit skill group</h1>
+      <SkillGroupForm group={group} />
+    </div>
+  );
+}

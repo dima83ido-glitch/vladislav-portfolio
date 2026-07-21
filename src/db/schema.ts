@@ -130,6 +130,8 @@ export const pricingPlans = pgTable("pricing_plans", {
   description: jsonb("description").notNull().$type<LocalizedText>(),
   features: jsonb("features").notNull().$type<LocalizedList>(),
   price: text("price").notNull(),
+  /** Cents; null for quote-only plans (not directly orderable — same convention as the static pricing data). */
+  priceCents: integer("price_cents"),
   periodKey: periodKeyEnum("period_key").notNull(),
   highlighted: boolean("highlighted").notNull().default(false),
   showOnHomepage: boolean("show_on_homepage").notNull().default(false),

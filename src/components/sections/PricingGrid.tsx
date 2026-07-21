@@ -1,45 +1,55 @@
-"use client";
-
-import { useTranslations } from "next-intl";
-import { Reveal } from "@/components/ui/Reveal";
-import { PricingCard } from "@/components/ui/PricingCard";
+import { getLocale, getTranslations } from "next-intl/server";
+import { PricingCardsGrid, type NormalizedPlan } from "@/components/sections/PricingCardsGrid";
 import { PRICING_PLANS_FULL } from "@/lib/data/pricing";
-import { usePlanOrder } from "@/components/pricing/usePlanOrder";
+import { getPublishedPlans } from "@/db/queries/pricingPlans";
+import { resolveLocalizedList, resolveLocalizedText } from "@/lib/cms/localized";
 
-export function PricingGrid() {
-  const t = useTranslations("pricingPage");
-  const { order, pendingPlanId, errorKey } = usePlanOrder("full");
+export async function PricingGrid() {
+  const t = await getTranslations("pricingPage");
+  const locale = await getLocale();
+  const dbPlans = await getPublishedPlans();
+
+  const plans: NormalizedPlan[] =
+    dbPlans.length > 0
+      ? dbPlans.map((p) => ({
+          id: p.slug,
+          name: resolveLocalizedText(p.name, locale),
+          description: resolveLocalizedText(p.description, locale),
+          features: resolveLocalizedList(p.features, locale),
+          price: p.price,
+          periodLabel: t(`periods.${p.periodKey}`),
+          customNote: p.priceCents ? undefined : t("customCtaNote"),
+          highlighted: p.highlighted,
+          orderable: Boolean(p.priceCents),
+          ctaLabel: p.priceCents ? t("genericCta") : t("customCtaNote"),
+          ctaHref: p.ctaOverrideHref ?? "/#contact",
+        }))
+      : PRICING_PLANS_FULL.map((p) => {
+          const isCustom = p.id === "custom";
+          return {
+            id: p.id,
+            name: t(`plans.${p.id}.name`),
+            description: t(`plans.${p.id}.description`),
+            features: t.raw(`plans.${p.id}.features`),
+            price: p.price,
+            periodLabel: t(`periods.${p.periodKey}`),
+            customNote: isCustom ? t("customCtaNote") : undefined,
+            highlighted: p.highlighted,
+            orderable: Boolean(p.priceCents),
+            ctaLabel: t(`plans.${p.id}.cta`),
+            ctaHref: "/#contact",
+          };
+        });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {PRICING_PLANS_FULL.map((plan, i) => {
-          const isCustom = plan.id === "custom";
-
-          return (
-            <Reveal key={plan.id} variant="up" delay={(i % 3) * 0.1}>
-              <PricingCard
-                name={t(`plans.${plan.id}.name`)}
-                description={t(`plans.${plan.id}.description`)}
-                price={plan.price}
-                period={t(`periods.${plan.periodKey}`)}
-                customNote={isCustom ? t("customCtaNote") : undefined}
-                features={t.raw(`plans.${plan.id}.features`)}
-                cta={t(`plans.${plan.id}.cta`)}
-                ctaHref={isCustom ? "/#contact" : undefined}
-                onCtaClick={plan.priceCents ? () => order(plan.id) : undefined}
-                ctaPending={pendingPlanId === plan.id}
-                highlighted={plan.highlighted}
-                mostPopularLabel={t("mostPopular")}
-              />
-            </Reveal>
-          );
-        })}
-      </div>
-
-      {errorKey ? (
-        <p className="text-center text-sm text-red-400">{t(`errors.${errorKey}`)}</p>
-      ) : null}
+    <div className="mt-20">
+      <PricingCardsGrid
+        plans={plans}
+        source="full"
+        mostPopularLabel={t("mostPopular")}
+        gridClassName="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+        errorNamespace="pricingPage"
+      />
     </div>
   );
 }

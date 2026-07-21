@@ -220,6 +220,8 @@
     "description": "Transparent, milestone-based pricing — no hidden retainers, no surprise invoices.",
     "mostPopular": "Most popular",
     "morePlans": "More Plans",
+    "genericCta": "Start a project",
+    "genericQuoteCta": "Contact me for a custom quote",
     "errors": {
       "invalidPlan": "That plan isn't available right now.",
       "generic": "Something went wrong. Please try again."
@@ -281,6 +283,8 @@
     "backToHome": "Back to homepage",
     "customCtaNote": "Contact me for a custom quote.",
     "mostPopular": "Most popular",
+    "genericCta": "Start a project",
+    "genericQuoteCta": "Contact me for a custom quote",
     "errors": {
       "invalidPlan": "That plan isn't available right now.",
       "generic": "Something went wrong. Please try again."

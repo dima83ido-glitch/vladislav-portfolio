@@ -15,6 +15,13 @@
       "when": 1784584749263,
       "tag": "0001_whole_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784587401059,
+      "tag": "0002_fuzzy_onslaught",
+      "breakpoints": true
     }
   ]
 }

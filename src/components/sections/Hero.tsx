@@ -8,11 +8,13 @@ import { GlowBackground } from "@/components/ui/GlowBackground";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 
-export function Hero() {
+export type HeroStat = { value: number; suffix: string; label: string };
+
+export function Hero({ stats }: { stats?: HeroStat[] }) {
   const t = useTranslations("hero");
   const siteT = useTranslations("site");
 
-  const STATS = [
+  const STATS: HeroStat[] = stats ?? [
     { value: 150, suffix: "+", label: t("stats.projects") },
     { value: 5, suffix: "+", label: t("stats.experience") },
     { value: 98, suffix: "%", label: t("stats.satisfaction") },

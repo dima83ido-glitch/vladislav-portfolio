@@ -1,0 +1,1 @@
+ALTER TABLE "pricing_plans" ADD COLUMN "price_cents" integer;

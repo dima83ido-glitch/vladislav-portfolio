@@ -4,17 +4,36 @@ import { getDb } from "@/db/client";
 import { orders } from "@/db/schema";
 import { requireUser } from "@/lib/auth/session";
 import { PRICING_PLANS, PRICING_PLANS_FULL } from "@/lib/data/pricing";
+import { getPlanBySlug } from "@/db/queries/pricingPlans";
 
 type PlanSource = "home" | "full";
 
 /**
- * Plan price is ALWAYS resolved here, server-side, from the trusted static
- * data file — never trust a client-supplied price. The client only ever
- * sends which plan (source + id) it wants.
+ * Plan price is ALWAYS resolved here, server-side — never trust a
+ * client-supplied price. The client only ever sends which plan (source +
+ * id) it wants. Admin-managed DB plans (by slug) take precedence; the
+ * static data file is the fallback for as long as the CMS table is empty,
+ * matching the same fallback convention used for Portfolio/Services/etc.
  */
-function resolvePlan(source: PlanSource, planId: string) {
+async function resolvePlan(
+  source: PlanSource,
+  planId: string
+): Promise<{ title: string; priceCents: number } | null> {
+  const dbPlan = await getPlanBySlug(planId).catch(() => null);
+  if (dbPlan && dbPlan.status === "published" && dbPlan.priceCents) {
+    return { title: dbPlan.name.en, priceCents: dbPlan.priceCents };
+  }
+
   const list = source === "home" ? PRICING_PLANS : PRICING_PLANS_FULL;
-  return list.find((plan) => plan.id === planId) ?? null;
+  const staticPlan = list.find((plan) => plan.id === planId);
+  if (staticPlan?.priceCents) {
+    return {
+      title: `${staticPlan.id.charAt(0).toUpperCase()}${staticPlan.id.slice(1)} plan`,
+      priceCents: staticPlan.priceCents,
+    };
+  }
+
+  return null;
 }
 
 export async function createOrderFromPlan(
@@ -26,8 +45,8 @@ export async function createOrderFromPlan(
     return { ok: false, error: "unauthorized" };
   }
 
-  const plan = resolvePlan(source, planId);
-  if (!plan || !plan.priceCents) {
+  const plan = await resolvePlan(source, planId);
+  if (!plan) {
     return { ok: false, error: "invalidPlan" };
   }
 
@@ -36,7 +55,7 @@ export async function createOrderFromPlan(
       .insert(orders)
       .values({
         userId: session.user.id,
-        title: `${plan.id.charAt(0).toUpperCase()}${plan.id.slice(1)} plan`,
+        title: plan.title,
         price: plan.priceCents,
         currency: "usd",
         status: "pending_payment",

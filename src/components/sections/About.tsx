@@ -3,21 +3,35 @@
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { FiLayers, FiPenTool, FiUsers, FiZap } from "react-icons/fi";
+import type { IconType } from "react-icons";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Marquee } from "@/components/ui/Marquee";
 import { SITE } from "@/lib/data/site";
 import { TECH_STACK } from "@/lib/data/skills";
 
-const PHILOSOPHY_CARDS = [
-  { id: "design-first", icon: FiPenTool },
-  { id: "performance", icon: FiZap },
-  { id: "full-stack", icon: FiLayers },
-  { id: "partner", icon: FiUsers },
-] as const;
+const DEFAULT_PHILOSOPHY_IDS = ["design-first", "performance", "full-stack", "partner"] as const;
+const DEFAULT_ICONS = [FiPenTool, FiZap, FiLayers, FiUsers];
 
-export function About() {
+export type AboutPhilosophyCard = { icon: IconType; title: string; description: string };
+
+export function About({
+  biography,
+  philosophyCards,
+}: {
+  biography?: string[];
+  philosophyCards?: AboutPhilosophyCard[];
+}) {
   const t = useTranslations("about");
+
+  const paragraphs = biography ?? [t("paragraph1", { name: SITE.name }), t("paragraph2")];
+  const cards: AboutPhilosophyCard[] =
+    philosophyCards ??
+    DEFAULT_PHILOSOPHY_IDS.map((id, i) => ({
+      icon: DEFAULT_ICONS[i],
+      title: t(`philosophy.${id}.title`),
+      description: t(`philosophy.${id}.description`),
+    }));
 
   return (
     <section id="about" className="relative py-32 lg:py-40">
@@ -32,8 +46,9 @@ export function About() {
 
             <Reveal variant="up" delay={0.1}>
               <div className="flex flex-col gap-5 text-base leading-relaxed text-muted sm:text-lg">
-                <p>{t("paragraph1", { name: SITE.name })}</p>
-                <p>{t("paragraph2")}</p>
+                {paragraphs.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
               </div>
             </Reveal>
 
@@ -47,8 +62,8 @@ export function About() {
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {PHILOSOPHY_CARDS.map((card, i) => (
-              <Reveal key={card.id} variant="scale" delay={i * 0.1}>
+            {cards.map((card, i) => (
+              <Reveal key={i} variant="scale" delay={i * 0.1}>
                 <motion.div
                   whileHover={{ y: -6, borderColor: "rgba(122,162,255,0.5)" }}
                   transition={{ duration: 0.3 }}
@@ -57,12 +72,8 @@ export function About() {
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-soft/10 text-blue-soft">
                     <card.icon size={18} />
                   </span>
-                  <h3 className="text-lg font-bold text-foreground">
-                    {t(`philosophy.${card.id}.title`)}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted">
-                    {t(`philosophy.${card.id}.description`)}
-                  </p>
+                  <h3 className="text-lg font-bold text-foreground">{card.title}</h3>
+                  <p className="text-sm leading-relaxed text-muted">{card.description}</p>
                 </motion.div>
               </Reveal>
             ))}
