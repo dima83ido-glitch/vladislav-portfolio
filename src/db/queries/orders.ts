@@ -1,6 +1,6 @@
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { orderFiles, orderMessages, orders, payments, users } from "@/db/schema";
+import { orderFiles, orderMessages, orders, payments, safeUserColumns, users } from "@/db/schema";
 
 const CURRENT_STATUSES = ["pending_payment", "paid", "in_progress", "delivered"] as const;
 
@@ -24,7 +24,7 @@ export async function getOrderForAdmin(orderId: string) {
 
 export async function getOrderMessages(orderId: string) {
   return getDb()
-    .select({ message: orderMessages, author: users })
+    .select({ message: orderMessages, author: safeUserColumns })
     .from(orderMessages)
     .innerJoin(users, eq(orderMessages.authorId, users.id))
     .where(eq(orderMessages.orderId, orderId))

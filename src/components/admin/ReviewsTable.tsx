@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { FiStar } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import type { Review } from "@/db/schema";
@@ -15,6 +16,7 @@ const STATUS_STYLES: Record<string, string> = {
 
 export function ReviewsTable({ reviews }: { reviews: Review[] }) {
   const router = useRouter();
+  const t = useTranslations("admin");
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -29,7 +31,7 @@ export function ReviewsTable({ reviews }: { reviews: Review[] }) {
   }
 
   if (reviews.length === 0) {
-    return <p className="py-12 text-center text-sm text-muted">No reviews in this view.</p>;
+    return <p className="py-12 text-center text-sm text-muted">{t("reviews.empty")}</p>;
   }
 
   return (
@@ -53,7 +55,7 @@ export function ReviewsTable({ reviews }: { reviews: Review[] }) {
                       STATUS_STYLES[review.status]
                     )}
                   >
-                    {review.status}
+                    {t(`reviews.tabs.${review.status}`)}
                   </span>
                 </div>
                 <span className="text-xs text-muted">{review.authorEmail}</span>
@@ -88,7 +90,7 @@ export function ReviewsTable({ reviews }: { reviews: Review[] }) {
                     onClick={() => run(review.id, () => approveReview(review.id))}
                     className="font-medium text-emerald-400 transition-opacity hover:opacity-80 disabled:opacity-40"
                   >
-                    Approve
+                    {t("common.approve")}
                   </button>
                 ) : null}
                 {review.status !== "rejected" ? (
@@ -98,7 +100,7 @@ export function ReviewsTable({ reviews }: { reviews: Review[] }) {
                     onClick={() => run(review.id, () => rejectReview(review.id))}
                     className="font-medium text-amber-400 transition-opacity hover:opacity-80 disabled:opacity-40"
                   >
-                    Reject
+                    {t("common.reject")}
                   </button>
                 ) : null}
                 <button
@@ -107,19 +109,19 @@ export function ReviewsTable({ reviews }: { reviews: Review[] }) {
                   onClick={() => setEditingId(review.id)}
                   className="font-medium text-muted transition-colors hover:text-foreground disabled:opacity-40"
                 >
-                  Edit
+                  {t("common.edit")}
                 </button>
                 <button
                   type="button"
                   disabled={isBusy}
                   onClick={() => {
-                    if (confirm("Delete this review permanently?")) {
+                    if (confirm(t("reviews.confirmDelete"))) {
                       run(review.id, () => deleteReview(review.id));
                     }
                   }}
                   className="font-medium text-red-400 transition-opacity hover:opacity-80 disabled:opacity-40"
                 >
-                  Delete
+                  {t("common.delete")}
                 </button>
               </div>
             ) : null}
@@ -141,6 +143,7 @@ function EditForm({
   onCancel: () => void;
   onSave: (data: { authorName: string; body: string; rating: number }) => void;
 }) {
+  const t = useTranslations("admin.common");
   const [authorName, setAuthorName] = useState(review.authorName);
   const [body, setBody] = useState(review.body);
   const [rating, setRating] = useState(review.rating);
@@ -175,7 +178,7 @@ function EditForm({
           onClick={() => onSave({ authorName, body, rating })}
           className="font-medium text-blue-soft transition-opacity hover:opacity-80 disabled:opacity-40"
         >
-          Save
+          {t("save")}
         </button>
         <button
           type="button"
@@ -183,7 +186,7 @@ function EditForm({
           onClick={onCancel}
           className="font-medium text-muted transition-colors hover:text-foreground"
         >
-          Cancel
+          {t("cancel")}
         </button>
       </div>
     </div>

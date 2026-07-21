@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createService, updateService } from "@/lib/cms/content/actions";
 import { ICON_NAMES } from "@/lib/cms/icons";
 import type { Service } from "@/db/schema";
@@ -10,6 +11,8 @@ const LOCALES = ["en", "uk", "ru"] as const;
 
 export function ServiceForm({ service }: { service?: Service }) {
   const router = useRouter();
+  const t = useTranslations("admin.content.services");
+  const commonT = useTranslations("admin.common");
 
   const [slug, setSlug] = useState(service?.slug ?? "");
   const [icon, setIcon] = useState(service?.icon ?? ICON_NAMES[0]);
@@ -58,7 +61,7 @@ export function ServiceForm({ service }: { service?: Service }) {
     setIsPending(false);
 
     if (!result.ok) {
-      setError(result.error === "slugTaken" ? "That slug is already used." : "Please check every field.");
+      setError(result.error === "slugTaken" ? commonT("errorSlugTaken") : commonT("errorCheckFields"));
       return;
     }
 
@@ -70,7 +73,7 @@ export function ServiceForm({ service }: { service?: Service }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Slug</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{commonT("slug")}</label>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value.toLowerCase())}
@@ -79,7 +82,7 @@ export function ServiceForm({ service }: { service?: Service }) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Icon</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{commonT("icon")}</label>
           <select
             value={icon}
             onChange={(e) => setIcon(e.target.value)}
@@ -96,7 +99,9 @@ export function ServiceForm({ service }: { service?: Service }) {
 
       {(["title", "description"] as const).map((field) => (
         <div key={field} className="flex flex-col gap-2">
-          <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{field}</span>
+          <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
+            {field === "title" ? commonT("title") : commonT("description")}
+          </span>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {LOCALES.map((locale) => (
               <input
@@ -117,7 +122,7 @@ export function ServiceForm({ service }: { service?: Service }) {
       ))}
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Features (one per line)</span>
+        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{commonT("features")}</span>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {LOCALES.map((locale) => (
             <textarea
@@ -134,7 +139,7 @@ export function ServiceForm({ service }: { service?: Service }) {
 
       <div className="flex items-center gap-6">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Sort order</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{commonT("sortOrder")}</label>
           <input
             type="number"
             value={sortOrder}
@@ -143,14 +148,14 @@ export function ServiceForm({ service }: { service?: Service }) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Status</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{commonT("status")}</label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as "draft" | "published")}
             className="rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-blue-soft"
           >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
+            <option value="draft">{commonT("draft")}</option>
+            <option value="published">{commonT("published")}</option>
           </select>
         </div>
       </div>
@@ -162,7 +167,7 @@ export function ServiceForm({ service }: { service?: Service }) {
         disabled={isPending}
         className="w-fit rounded-full bg-foreground px-8 py-3 text-sm font-semibold text-background transition-colors hover:bg-blue-soft disabled:opacity-50"
       >
-        {isPending ? "Saving…" : service ? "Save changes" : "Create service"}
+        {isPending ? commonT("saving") : service ? commonT("saveChanges") : t("create")}
       </button>
     </form>
   );

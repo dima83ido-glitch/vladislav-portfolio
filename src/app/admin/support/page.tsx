@@ -1,12 +1,7 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getAllTickets } from "@/db/queries/support";
-
-const STATUS_LABELS: Record<string, string> = {
-  open: "Open",
-  awaiting_admin: "Awaiting reply",
-  awaiting_user: "Replied",
-  closed: "Closed",
-};
+import { getAdminLocale } from "@/lib/i18n/adminLocale";
 
 const STATUS_STYLES: Record<string, string> = {
   open: "bg-amber-500/10 text-amber-400",
@@ -18,15 +13,18 @@ const STATUS_STYLES: Record<string, string> = {
 export default async function AdminSupportPage() {
   const tickets = await getAllTickets();
 
+  const locale = await getAdminLocale();
+  const t = await getTranslations({ locale, namespace: "admin.support" });
+
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Support</h1>
-        <p className="mt-1 text-sm text-muted">All customer support tickets.</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="mt-1 text-sm text-muted">{t("subtitle")}</p>
       </div>
 
       {tickets.length === 0 ? (
-        <p className="py-12 text-center text-sm text-muted">No support tickets yet.</p>
+        <p className="py-12 text-center text-sm text-muted">{t("empty")}</p>
       ) : (
         <div className="flex flex-col gap-3">
           {tickets.map(({ ticket, user }) => (
@@ -45,7 +43,7 @@ export default async function AdminSupportPage() {
               <span
                 className={`w-fit rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[ticket.status]}`}
               >
-                {STATUS_LABELS[ticket.status]}
+                {t(`status.${ticket.status}`)}
               </span>
             </Link>
           ))}

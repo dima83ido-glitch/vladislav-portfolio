@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { and, eq, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { sessions, users } from "@/db/schema";
+import { safeUserColumns, sessions, users } from "@/db/schema";
 
 const SESSION_COOKIE = "session";
 const REMEMBER_ME_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -56,7 +56,7 @@ export const getSession = cache(async () => {
 
   try {
     const rows = await getDb()
-      .select({ session: sessions, user: users })
+      .select({ session: sessions, user: safeUserColumns })
       .from(sessions)
       .innerJoin(users, eq(sessions.userId, users.id))
       .where(eq(sessions.tokenHash, tokenHash))
@@ -65,6 +65,10 @@ export const getSession = cache(async () => {
     const row = rows[0];
     if (!row) return null;
     if (row.session.expiresAt.getTime() < Date.now()) return null;
+    // A user blocked/deleted after this session was issued is cut off on
+    // their very next request — status is re-checked on every read, not
+    // just at login time.
+    if (row.user.status !== "active") return null;
 
     return { user: row.user, sessionId: row.session.id };
   } catch (error) {

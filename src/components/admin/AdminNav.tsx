@@ -2,23 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/portfolio", label: "Portfolio" },
-  { href: "/admin/pricing", label: "Pricing" },
-  { href: "/admin/content", label: "Content" },
-  { href: "/admin/reviews", label: "Reviews" },
-  { href: "/admin/payments", label: "Payments" },
-  { href: "/admin/support", label: "Support" },
-  { href: "/admin/analytics", label: "Analytics" },
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/settings", label: "Settings" },
-];
+  { href: "/admin", key: "overview" },
+  { href: "/admin/portfolio", key: "portfolio" },
+  { href: "/admin/pricing", key: "pricing" },
+  { href: "/admin/content", key: "content" },
+  { href: "/admin/reviews", key: "reviews" },
+  { href: "/admin/payments", key: "payments" },
+  { href: "/admin/support", key: "support" },
+  { href: "/admin/analytics", key: "analytics" },
+  { href: "/admin/users", key: "users" },
+  { href: "/admin/settings", key: "settings" },
+] as const;
 
 export function AdminNav() {
   const pathname = usePathname();
+  const t = useTranslations("admin.nav");
 
   return (
     <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -33,7 +35,7 @@ export function AdminNav() {
               isActive ? "text-blue-soft" : "text-muted hover:text-foreground"
             )}
           >
-            {link.label}
+            {t(link.key)}
           </Link>
         );
       })}

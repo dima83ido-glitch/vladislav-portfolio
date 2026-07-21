@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createPlan, updatePlan } from "@/lib/cms/pricing/actions";
 import type { PricingPlan as DbPricingPlan } from "@/db/schema";
 
@@ -9,6 +10,8 @@ const LOCALES = ["en", "uk", "ru"] as const;
 
 export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
   const router = useRouter();
+  const t = useTranslations("admin.common");
+  const pt = useTranslations("admin.pricing");
 
   const [slug, setSlug] = useState(plan?.slug ?? "");
   const [name, setName] = useState({ en: plan?.name.en ?? "", uk: plan?.name.uk ?? "", ru: plan?.name.ru ?? "" });
@@ -66,10 +69,10 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
     if (!result.ok) {
       setError(
         result.error === "slugTaken"
-          ? "That slug is already used by another plan."
+          ? t("errorSlugTaken")
           : result.error === "invalid"
-            ? "Please check every required field (name/description need at least English, features need at least one English item)."
-            : "Something went wrong."
+            ? pt("errorCheckFields")
+            : t("errorGeneric")
       );
       return;
     }
@@ -81,7 +84,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Slug</label>
+        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{t("slug")}</label>
         <input
           value={slug}
           onChange={(e) => setSlug(e.target.value.toLowerCase())}
@@ -92,7 +95,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Name</span>
+        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{t("name")}</span>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {LOCALES.map((locale) => (
             <input
@@ -107,7 +110,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Description</span>
+        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{t("description")}</span>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {LOCALES.map((locale) => (
             <input
@@ -123,7 +126,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
 
       <div className="flex flex-col gap-2">
         <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-          Features (one per line)
+          {t("features")}
         </span>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {LOCALES.map((locale) => (
@@ -142,7 +145,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-            Display price
+            {pt("displayPrice")}
           </label>
           <input
             value={price}
@@ -153,7 +156,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
         </div>
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-            Amount ($, blank = quote-only)
+            {pt("amount")}
           </label>
           <input
             type="number"
@@ -165,18 +168,18 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Period</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{pt("period")}</label>
           <select
             value={periodKey}
             onChange={(e) => setPeriodKey(e.target.value as "oneTime" | "quote")}
             className="rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-blue-soft"
           >
-            <option value="oneTime">One-time</option>
-            <option value="quote">Quote</option>
+            <option value="oneTime">{pt("oneTime")}</option>
+            <option value="quote">{pt("quote")}</option>
           </select>
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Sort order</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{t("sortOrder")}</label>
           <input
             type="number"
             value={sortOrder}
@@ -188,7 +191,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-          CTA link override (for quote-only plans; defaults to /#contact)
+          {pt("ctaOverride")}
         </label>
         <input
           value={ctaOverrideHref}
@@ -201,7 +204,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
       <div className="flex flex-wrap items-center gap-6">
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input type="checkbox" checked={highlighted} onChange={(e) => setHighlighted(e.target.checked)} />
-          Highlighted (&quot;Most popular&quot;)
+          {pt("highlighted")}
         </label>
         <label className="flex items-center gap-2 text-sm text-foreground">
           <input
@@ -209,7 +212,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
             checked={showOnHomepage}
             onChange={(e) => setShowOnHomepage(e.target.checked)}
           />
-          Show on homepage teaser
+          {pt("showOnHomepage")}
         </label>
         <div className="flex flex-col gap-1.5">
           <select
@@ -217,8 +220,8 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
             onChange={(e) => setStatus(e.target.value as "draft" | "published")}
             className="rounded-xl border border-line-strong bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-blue-soft"
           >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
+            <option value="draft">{t("draft")}</option>
+            <option value="published">{t("published")}</option>
           </select>
         </div>
       </div>
@@ -230,7 +233,7 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
         disabled={isPending}
         className="w-fit rounded-full bg-foreground px-8 py-3 text-sm font-semibold text-background transition-colors hover:bg-blue-soft disabled:opacity-50"
       >
-        {isPending ? "Saving…" : plan ? "Save changes" : "Create plan"}
+        {isPending ? t("saving") : plan ? t("saveChanges") : pt("create")}
       </button>
     </form>
   );

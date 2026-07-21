@@ -1,6 +1,6 @@
 import { and, count, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { orders, payments, reviews, supportTickets, users } from "@/db/schema";
+import { orders, payments, reviews, safeUserColumns, supportTickets, users } from "@/db/schema";
 
 const CANCELLED_STATUSES = ["cancelled", "payment_rejected"] as const;
 /** Orders that made it past checkout — used both for the "converted" pending
@@ -109,7 +109,7 @@ export async function getOrdersByDay(days = 30) {
 export async function getLatestOrders(limit = 10) {
   const db = getDb();
   const rows = await db
-    .select({ order: orders, user: users })
+    .select({ order: orders, user: safeUserColumns })
     .from(orders)
     .innerJoin(users, eq(orders.userId, users.id))
     .orderBy(desc(orders.createdAt))

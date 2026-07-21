@@ -3,22 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { setUserStatus } from "@/lib/cms/users/actions";
+import { deleteUser } from "@/lib/cms/users/actions";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
-export function UserStatusToggle({ userId, status }: { userId: string; status: "active" | "suspended" }) {
+export function DeleteUserButton({ userId }: { userId: string }) {
   const t = useTranslations("admin");
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
 
-  const next = status === "active" ? "suspended" : "active";
-  const isBlocking = next === "suspended";
-
   async function handleConfirm() {
     setIsPending(true);
     try {
-      await setUserStatus(userId, next);
+      await deleteUser(userId);
       router.refresh();
     } finally {
       setIsPending(false);
@@ -32,19 +29,17 @@ export function UserStatusToggle({ userId, status }: { userId: string; status: "
         type="button"
         onClick={() => setIsConfirming(true)}
         disabled={isPending}
-        className={`text-sm font-medium transition-opacity hover:opacity-80 disabled:opacity-40 ${
-          isBlocking ? "text-red-400" : "text-emerald-400"
-        }`}
+        className="text-sm font-medium text-red-400 transition-opacity hover:opacity-80 disabled:opacity-40"
       >
-        {isBlocking ? t("users.block") : t("users.unblock")}
+        {t("users.delete")}
       </button>
       <ConfirmDialog
         open={isConfirming}
-        title={isBlocking ? t("users.confirmBlockTitle") : t("users.confirmUnblockTitle")}
-        body={isBlocking ? t("users.confirmBlockBody") : t("users.confirmUnblockBody")}
-        confirmLabel={isBlocking ? t("users.block") : t("users.unblock")}
+        title={t("users.confirmDeleteTitle")}
+        body={t("users.confirmDeleteBody")}
+        confirmLabel={t("users.delete")}
         cancelLabel={t("common.cancel")}
-        variant={isBlocking ? "danger" : "default"}
+        variant="danger"
         isPending={isPending}
         onConfirm={handleConfirm}
         onCancel={() => setIsConfirming(false)}

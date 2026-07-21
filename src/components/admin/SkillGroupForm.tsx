@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { createSkillGroup, updateSkillGroup } from "@/lib/cms/content/actions";
 import type { Skill, SkillGroup } from "@/db/schema";
@@ -12,6 +13,8 @@ type GroupWithSkills = SkillGroup & { skills: Skill[] };
 
 export function SkillGroupForm({ group }: { group?: GroupWithSkills }) {
   const router = useRouter();
+  const t = useTranslations("admin.content.skills");
+  const commonT = useTranslations("admin.common");
 
   const [category, setCategory] = useState({
     en: group?.category.en ?? "",
@@ -39,7 +42,7 @@ export function SkillGroupForm({ group }: { group?: GroupWithSkills }) {
     setIsPending(false);
 
     if (!result.ok) {
-      setError("Please check every field — at least one named skill is required.");
+      setError(t("errorCheckFields"));
       return;
     }
 
@@ -50,7 +53,7 @@ export function SkillGroupForm({ group }: { group?: GroupWithSkills }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Category</span>
+        <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{commonT("category")}</span>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {LOCALES.map((locale) => (
             <input
@@ -65,7 +68,7 @@ export function SkillGroupForm({ group }: { group?: GroupWithSkills }) {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Sort order</label>
+        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{commonT("sortOrder")}</label>
         <input
           type="number"
           value={sortOrder}
@@ -75,7 +78,7 @@ export function SkillGroupForm({ group }: { group?: GroupWithSkills }) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="text-sm font-semibold text-foreground">Skills</span>
+        <span className="text-sm font-semibold text-foreground">{t("title")}</span>
         {skills.map((skill, i) => (
           <div key={i} className="flex items-center gap-3">
             <input
@@ -108,7 +111,7 @@ export function SkillGroupForm({ group }: { group?: GroupWithSkills }) {
           onClick={() => setSkills((prev) => [...prev, { name: "", level: 80, sortOrder: prev.length }])}
           className="flex w-fit items-center gap-2 text-sm font-medium text-blue-soft transition-colors hover:text-blue-soft/80"
         >
-          <FiPlus size={14} /> Add skill
+          <FiPlus size={14} /> {t("addSkill")}
         </button>
       </div>
 
@@ -119,7 +122,7 @@ export function SkillGroupForm({ group }: { group?: GroupWithSkills }) {
         disabled={isPending}
         className="w-fit rounded-full bg-foreground px-8 py-3 text-sm font-semibold text-background transition-colors hover:bg-blue-soft disabled:opacity-50"
       >
-        {isPending ? "Saving…" : group ? "Save changes" : "Create group"}
+        {isPending ? commonT("saving") : group ? commonT("saveChanges") : t("create")}
       </button>
     </form>
   );

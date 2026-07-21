@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { supportMessages, supportTickets, users } from "@/db/schema";
+import { safeUserColumns, supportMessages, supportTickets, users } from "@/db/schema";
 
 export async function getTicketsByUser(userId: string) {
   return getDb()
@@ -12,7 +12,7 @@ export async function getTicketsByUser(userId: string) {
 
 export async function getAllTickets() {
   return getDb()
-    .select({ ticket: supportTickets, user: users })
+    .select({ ticket: supportTickets, user: safeUserColumns })
     .from(supportTickets)
     .innerJoin(users, eq(supportTickets.userId, users.id))
     .orderBy(desc(supportTickets.updatedAt));
@@ -20,7 +20,7 @@ export async function getAllTickets() {
 
 export async function getTicketById(ticketId: string) {
   const [row] = await getDb()
-    .select({ ticket: supportTickets, user: users })
+    .select({ ticket: supportTickets, user: safeUserColumns })
     .from(supportTickets)
     .innerJoin(users, eq(supportTickets.userId, users.id))
     .where(eq(supportTickets.id, ticketId))
@@ -30,7 +30,7 @@ export async function getTicketById(ticketId: string) {
 
 export async function getTicketMessages(ticketId: string) {
   return getDb()
-    .select({ message: supportMessages, author: users })
+    .select({ message: supportMessages, author: safeUserColumns })
     .from(supportMessages)
     .innerJoin(users, eq(supportMessages.authorId, users.id))
     .where(eq(supportMessages.ticketId, ticketId))

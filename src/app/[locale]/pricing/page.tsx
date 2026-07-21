@@ -6,6 +6,7 @@ import { PricingGrid } from "@/components/sections/PricingGrid";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GlowBackground } from "@/components/ui/GlowBackground";
 import { BackButton } from "@/components/ui/BackButton";
+import { HomeButton } from "@/components/ui/HomeButton";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -30,7 +31,10 @@ export default async function PricingPage({ params }: PageProps) {
       <GlowBackground variant="section" />
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-12">
-        <BackButton label={commonT("back")} className="mb-10" />
+        <div className="mb-10 flex items-center gap-4">
+          <BackButton label={commonT("back")} />
+          <HomeButton label={commonT("home")} />
+        </div>
         <SectionHeading
           eyebrow={t("eyebrow")}
           title={t("title")}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 import { updateAboutContent } from "@/lib/cms/content/actions";
 import { ICON_NAMES } from "@/lib/cms/icons";
 import type { AboutContent } from "@/db/schema";
@@ -27,6 +28,8 @@ const DEFAULT_STATS = [
 ];
 
 export function AboutContentForm({ content }: { content: AboutContent | null }) {
+  const t = useTranslations("admin.content");
+  const commonT = useTranslations("admin.common");
   const [biography, setBiography] = useState<LocalizedText>({
     en: content?.biography.en?.join("\n\n") ?? "",
     uk: content?.biography.uk?.join("\n\n") ?? "",
@@ -74,7 +77,7 @@ export function AboutContentForm({ content }: { content: AboutContent | null }) 
     setIsPending(false);
 
     if (!result.ok) {
-      setError("Please check every field — English is required everywhere.");
+      setError(t("errorCheckFields"));
       return;
     }
     setSuccess(true);
@@ -84,7 +87,7 @@ export function AboutContentForm({ content }: { content: AboutContent | null }) 
     <form onSubmit={handleSubmit} className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-          Biography (paragraphs separated by a blank line)
+          {t("biography")}
         </span>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {LOCALES.map((locale) => (
@@ -101,7 +104,7 @@ export function AboutContentForm({ content }: { content: AboutContent | null }) 
       </div>
 
       <div className="flex flex-col gap-4">
-        <span className="text-sm font-semibold text-foreground">Philosophy cards (4)</span>
+        <span className="text-sm font-semibold text-foreground">{t("philosophyCards")}</span>
         {cards.map((card, i) => (
           <div key={i} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface/50 p-5">
             <select
@@ -127,7 +130,7 @@ export function AboutContentForm({ content }: { content: AboutContent | null }) 
                       prev.map((c, idx) => (idx === i ? { ...c, title: { ...c.title, [locale]: e.target.value } } : c))
                     )
                   }
-                  placeholder={`Title (${locale.toUpperCase()})`}
+                  placeholder={`${commonT("title")} (${locale.toUpperCase()})`}
                   className="rounded-xl border border-line-strong bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-soft"
                 />
               ))}
@@ -144,7 +147,7 @@ export function AboutContentForm({ content }: { content: AboutContent | null }) 
                       )
                     )
                   }
-                  placeholder={`Description (${locale.toUpperCase()})`}
+                  placeholder={`${commonT("description")} (${locale.toUpperCase()})`}
                   className="rounded-xl border border-line-strong bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-blue-soft"
                 />
               ))}
@@ -154,7 +157,7 @@ export function AboutContentForm({ content }: { content: AboutContent | null }) 
       </div>
 
       <div className="flex flex-col gap-4">
-        <span className="text-sm font-semibold text-foreground">Hero stats (3)</span>
+        <span className="text-sm font-semibold text-foreground">{t("heroStats")}</span>
         {stats.map((stat, i) => (
           <div key={i} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface/50 p-5 sm:flex-row sm:items-center">
             <div className="flex gap-2">
@@ -195,14 +198,14 @@ export function AboutContentForm({ content }: { content: AboutContent | null }) 
       </div>
 
       {error ? <p className="text-sm text-red-400">{error}</p> : null}
-      {success ? <p className="text-sm text-emerald-400">Saved.</p> : null}
+      {success ? <p className="text-sm text-emerald-400">{commonT("saved")}</p> : null}
 
       <button
         type="submit"
         disabled={isPending}
         className="w-fit rounded-full bg-foreground px-8 py-3 text-sm font-semibold text-background transition-colors hover:bg-blue-soft disabled:opacity-50"
       >
-        {isPending ? "Saving…" : "Save changes"}
+        {isPending ? commonT("saving") : commonT("saveChanges")}
       </button>
     </form>
   );

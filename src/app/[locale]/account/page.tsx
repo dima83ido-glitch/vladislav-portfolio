@@ -107,7 +107,7 @@ export default async function ProfilePage({ params }: PageProps) {
         ))}
       </div>
 
-      <SecuritySection />
+      <SecuritySection email={session.user.email} />
 
       <div className="flex items-center justify-between rounded-2xl border border-line bg-surface/50 p-6">
         <span className="text-sm font-medium text-foreground">{t("language")}</span>

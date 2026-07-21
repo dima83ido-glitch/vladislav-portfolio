@@ -1,5 +1,7 @@
-import type { Order, User } from "@/db/schema";
+import { getTranslations } from "next-intl/server";
+import type { Order, SafeUser } from "@/db/schema";
 import { cn } from "@/lib/utils";
+import { getAdminLocale } from "@/lib/i18n/adminLocale";
 
 const STATUS_STYLES: Record<Order["status"], string> = {
   pending_payment: "bg-amber-500/10 text-amber-400",
@@ -11,19 +13,13 @@ const STATUS_STYLES: Record<Order["status"], string> = {
   payment_rejected: "bg-red-500/10 text-red-400",
 };
 
-const STATUS_LABELS: Record<Order["status"], string> = {
-  pending_payment: "Pending payment",
-  paid: "Paid",
-  in_progress: "In progress",
-  delivered: "Delivered",
-  completed: "Completed",
-  cancelled: "Cancelled",
-  payment_rejected: "Payment rejected",
-};
+export async function LatestOrdersTable({ rows }: { rows: { order: Order; user: SafeUser }[] }) {
+  const locale = await getAdminLocale();
+  const t = await getTranslations({ locale, namespace: "admin.dashboard" });
+  const statusT = await getTranslations({ locale, namespace: "admin.orderStatus" });
 
-export function LatestOrdersTable({ rows }: { rows: { order: Order; user: User }[] }) {
   if (rows.length === 0) {
-    return <p className="text-sm text-muted">No orders yet.</p>;
+    return <p className="text-sm text-muted">{t("noOrders")}</p>;
   }
 
   return (
@@ -31,11 +27,11 @@ export function LatestOrdersTable({ rows }: { rows: { order: Order; user: User }
       <table className="w-full min-w-[640px] text-left text-sm">
         <thead>
           <tr className="border-b border-line text-xs uppercase tracking-[0.1em] text-muted">
-            <th className="pb-3 pr-4 font-medium">Order</th>
-            <th className="pb-3 pr-4 font-medium">Customer</th>
-            <th className="pb-3 pr-4 font-medium">Status</th>
-            <th className="pb-3 pr-4 font-medium">Amount</th>
-            <th className="pb-3 font-medium">Created</th>
+            <th className="pb-3 pr-4 font-medium">{t("table.order")}</th>
+            <th className="pb-3 pr-4 font-medium">{t("table.customer")}</th>
+            <th className="pb-3 pr-4 font-medium">{t("table.status")}</th>
+            <th className="pb-3 pr-4 font-medium">{t("table.amount")}</th>
+            <th className="pb-3 font-medium">{t("table.created")}</th>
           </tr>
         </thead>
         <tbody>
@@ -45,12 +41,12 @@ export function LatestOrdersTable({ rows }: { rows: { order: Order; user: User }
               <td className="py-3 pr-4 text-muted">{user.displayName || user.email}</td>
               <td className="py-3 pr-4">
                 <span className={cn("rounded-full px-3 py-1 text-xs font-medium", STATUS_STYLES[order.status])}>
-                  {STATUS_LABELS[order.status]}
+                  {statusT(order.status)}
                 </span>
               </td>
               <td className="py-3 pr-4 text-foreground">${(order.price / 100).toLocaleString()}</td>
               <td className="py-3 text-muted">
-                {new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(order.createdAt)}
+                {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(order.createdAt)}
               </td>
             </tr>
           ))}

@@ -22,3 +22,22 @@ export async function setUserStatus(userId: string, status: "active" | "suspende
   await getDb().update(users).set({ status }).where(eq(users.id, userId));
   revalidatePath("/admin/users");
 }
+
+/**
+ * Soft delete only — orders/payments/messages all reference users with
+ * `onDelete: "cascade"`, so an actual row delete would silently destroy a
+ * customer's order history. Marking `status: "deleted"` instead keeps every
+ * relation intact (and reuses the same login/session/order-placement gate
+ * that already blocks "suspended" users) while being irreversible from the
+ * admin UI, matching "safely removed."
+ */
+export async function deleteUser(userId: string) {
+  const session = await requireAdmin();
+
+  if (userId === session.user.id) {
+    throw new Error("Cannot delete your own account");
+  }
+
+  await getDb().update(users).set({ status: "deleted" }).where(eq(users.id, userId));
+  revalidatePath("/admin/users");
+}

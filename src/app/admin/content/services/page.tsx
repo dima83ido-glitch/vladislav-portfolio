@@ -1,30 +1,35 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getAllServicesAdmin } from "@/db/queries/content";
 import { DeleteServiceButton } from "@/components/admin/DeleteServiceButton";
+import { getAdminLocale } from "@/lib/i18n/adminLocale";
 
 export default async function AdminServicesPage() {
   const items = await getAllServicesAdmin();
+  const locale = await getAdminLocale();
+  const t = await getTranslations({ locale, namespace: "admin.content.services" });
+  const commonT = await getTranslations({ locale, namespace: "admin.common" });
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Services</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
           <Link href="/admin/content" className="text-sm text-muted hover:text-foreground">
-            ← Content
+            {commonT("backToContent")}
           </Link>
         </div>
         <Link
           href="/admin/content/services/new"
           className="rounded-full bg-blue-soft px-5 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft/90"
         >
-          New service
+          {t("new")}
         </Link>
       </div>
 
       {items.length === 0 ? (
         <p className="py-12 text-center text-sm text-muted">
-          No services yet — the public site is showing its built-in defaults until you add some here.
+          {t("empty")}
         </p>
       ) : (
         <div className="flex flex-col gap-3">
@@ -45,7 +50,7 @@ export default async function AdminServicesPage() {
               </div>
               <div className="flex items-center gap-4 text-sm">
                 <Link href={`/admin/content/services/${item.id}`} className="font-medium text-blue-soft hover:text-blue-soft/80">
-                  Edit
+                  {commonT("edit")}
                 </Link>
                 <DeleteServiceButton id={item.id} />
               </div>

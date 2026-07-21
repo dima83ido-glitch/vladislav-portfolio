@@ -2,6 +2,7 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createProject, updateProject, uploadProjectCoverImage } from "@/lib/cms/portfolio/actions";
 import type { PortfolioProject } from "@/db/schema";
 
@@ -12,6 +13,8 @@ type LocalizedFieldName = "title" | "category" | "description" | "results" | "se
 export function ProjectForm({ project }: { project?: PortfolioProject }) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations("admin.common");
+  const pt = useTranslations("admin.portfolio");
 
   const [slug, setSlug] = useState(project?.slug ?? "");
   const [fields, setFields] = useState<Record<LocalizedFieldName, { en: string; uk: string; ru: string }>>({
@@ -57,11 +60,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
     setIsUploading(false);
 
     if (!result.ok) {
-      setError(
-        result.error === "notConfigured"
-          ? "Media storage isn't configured yet (set CLOUDINARY_* env vars)."
-          : "Upload failed."
-      );
+      setError(result.error === "notConfigured" ? pt("mediaNotConfigured") : pt("uploadFailed"));
       return;
     }
     setCoverImageUrl(result.url);
@@ -100,10 +99,10 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
     if (!result.ok) {
       setError(
         result.error === "slugTaken"
-          ? "That slug is already used by another project."
+          ? t("errorSlugTaken")
           : result.error === "invalid"
-            ? "Please check every required field."
-            : "Something went wrong."
+            ? t("errorCheckFields")
+            : t("errorGeneric")
       );
       return;
     }
@@ -115,7 +114,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Slug</label>
+        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{t("slug")}</label>
         <input
           value={slug}
           onChange={(e) => setSlug(e.target.value.toLowerCase())}
@@ -128,7 +127,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
       {(["title", "category", "description", "results"] as LocalizedFieldName[]).map((name) => (
         <div key={name} className="flex flex-col gap-2">
           <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-            {name} {name === "results" ? "(optional)" : ""}
+            {t(name)} {name === "results" ? t("optional") : ""}
           </span>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {LOCALES.map((locale) => (
@@ -146,7 +145,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-          Technologies (comma-separated)
+          {pt("technologies")}
         </label>
         <input
           value={technologies}
@@ -157,7 +156,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Cover image</label>
+        <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{pt("coverImage")}</label>
         <div className="flex flex-wrap items-center gap-3">
           {coverImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -170,13 +169,13 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
             disabled={isUploading}
             className="rounded-full border border-line-strong px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:border-blue-soft disabled:opacity-50"
           >
-            {isUploading ? "Uploading…" : "Upload"}
+            {isUploading ? pt("uploading") : pt("upload")}
           </button>
         </div>
         <input
           value={coverImageUrl}
           onChange={(e) => setCoverImageUrl(e.target.value)}
-          placeholder="Or paste an image URL directly"
+          placeholder={pt("orPasteUrl")}
           className="rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-blue-soft"
         />
       </div>
@@ -184,7 +183,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-            Video URL (YouTube/Vimeo)
+            {pt("videoUrl")}
           </label>
           <input
             value={videoUrl}
@@ -193,7 +192,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Live demo URL</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{pt("liveUrl")}</label>
           <input
             value={liveUrl}
             onChange={(e) => setLiveUrl(e.target.value)}
@@ -201,7 +200,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">GitHub URL</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{pt("githubUrl")}</label>
           <input
             value={githubUrl}
             onChange={(e) => setGithubUrl(e.target.value)}
@@ -213,7 +212,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
       {(["seoTitle", "seoDescription"] as LocalizedFieldName[]).map((name) => (
         <div key={name} className="flex flex-col gap-2">
           <span className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
-            {name} (optional)
+            {t(name)} {t("optional")}
           </span>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {LOCALES.map((locale) => (
@@ -231,7 +230,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
 
       <div className="flex items-center gap-6">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Sort order</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{t("sortOrder")}</label>
           <input
             type="number"
             value={sortOrder}
@@ -240,14 +239,14 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">Status</label>
+          <label className="text-xs font-medium uppercase tracking-[0.15em] text-muted">{t("status")}</label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as "draft" | "published")}
             className="rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-blue-soft"
           >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
+            <option value="draft">{t("draft")}</option>
+            <option value="published">{t("published")}</option>
           </select>
         </div>
       </div>
@@ -259,7 +258,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
         disabled={isPending}
         className="w-fit rounded-full bg-foreground px-8 py-3 text-sm font-semibold text-background transition-colors hover:bg-blue-soft disabled:opacity-50"
       >
-        {isPending ? "Saving…" : project ? "Save changes" : "Create project"}
+        {isPending ? t("saving") : project ? t("saveChanges") : pt("create")}
       </button>
     </form>
   );

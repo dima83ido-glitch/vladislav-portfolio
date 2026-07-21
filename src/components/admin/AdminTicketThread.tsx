@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { closeTicket, replyToTicket } from "@/lib/support/actions";
 
 type MessageRow = {
@@ -21,6 +22,7 @@ export function AdminTicketThread({
   const [body, setBody] = useState("");
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+  const t = useTranslations("admin");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,14 +75,14 @@ export function AdminTicketThread({
       </div>
 
       {isClosed ? (
-        <p className="text-sm text-muted">This ticket is closed.</p>
+        <p className="text-sm text-muted">{t("support.closed")}</p>
       ) : (
         <>
           <form onSubmit={handleSubmit} className="flex gap-3">
             <input
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="Write a reply..."
+              placeholder={t("support.replyPlaceholder")}
               className="flex-1 rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
             />
             <button
@@ -88,7 +90,7 @@ export function AdminTicketThread({
               disabled={isPending}
               className="rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft disabled:opacity-50"
             >
-              Send
+              {t("common.send")}
             </button>
           </form>
           <button
@@ -97,7 +99,7 @@ export function AdminTicketThread({
             disabled={isPending}
             className="w-fit text-sm font-medium text-muted transition-colors hover:text-red-400"
           >
-            Close ticket
+            {t("support.closeTicket")}
           </button>
         </>
       )}

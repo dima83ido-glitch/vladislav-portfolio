@@ -6,6 +6,7 @@ import { requireUserOrRedirect } from "@/lib/auth/session";
 import { AccountNav } from "@/components/account/AccountNav";
 import { GlowBackground } from "@/components/ui/GlowBackground";
 import { BackButton } from "@/components/ui/BackButton";
+import { HomeButton } from "@/components/ui/HomeButton";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -24,7 +25,10 @@ export default async function AccountLayout({ children, params }: LayoutProps) {
     <section className="relative overflow-hidden py-32 lg:py-40">
       <GlowBackground variant="section" />
       <div className="relative mx-auto max-w-6xl px-6 lg:px-12">
-        <BackButton label={t("back")} className="mb-6" />
+        <div className="mb-6 flex items-center gap-4">
+          <BackButton label={t("back")} />
+          <HomeButton label={t("home")} />
+        </div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-[220px_1fr]">
           <AccountNav />
           <div className="min-w-0">{children}</div>

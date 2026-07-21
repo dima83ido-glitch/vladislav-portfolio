@@ -8,9 +8,16 @@ import { FiArrowUpRight } from "react-icons/fi";
 import { GlowBackground } from "@/components/ui/GlowBackground";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { BackButton } from "@/components/ui/BackButton";
-import { requestCode, verifyCode } from "@/lib/auth/actions";
+import { HomeButton } from "@/components/ui/HomeButton";
+import {
+  loginRequestCode,
+  loginVerifyCode,
+  registerRequestCode,
+  registerVerifyCode,
+} from "@/lib/auth/actions";
+import { PASSWORD_MIN_LENGTH } from "@/lib/auth/password.constants";
 
-type Step = "email" | "code";
+type Step = "credentials" | "code";
 
 export function LoginForm({
   callbackUrl,
@@ -20,10 +27,13 @@ export function LoginForm({
   isRegister?: boolean;
 }) {
   const t = useTranslations("auth");
+  const commonT = useTranslations("common");
   const router = useRouter();
 
-  const [step, setStep] = useState<Step>("email");
+  const [step, setStep] = useState<Step>("credentials");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [code, setCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -32,8 +42,20 @@ export function LoginForm({
   async function handleSendCode() {
     if (isPending) return;
     setErrorKey(null);
+
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      setErrorKey("invalidPassword");
+      return;
+    }
+    if (isRegister && password !== confirmPassword) {
+      setErrorKey("passwordMismatch");
+      return;
+    }
+
     setIsPending(true);
-    const result = await requestCode(email);
+    const result = isRegister
+      ? await registerRequestCode(email, password, confirmPassword)
+      : await loginRequestCode(email, password);
     setIsPending(false);
 
     if (!result.ok) {
@@ -47,7 +69,9 @@ export function LoginForm({
     if (isPending) return;
     setErrorKey(null);
     setIsPending(true);
-    const result = await verifyCode(email, code, rememberMe);
+    const result = isRegister
+      ? await registerVerifyCode(email, code, password, rememberMe)
+      : await loginVerifyCode(email, code, password, rememberMe);
     setIsPending(false);
 
     if (!result.ok) {
@@ -59,7 +83,7 @@ export function LoginForm({
     router.refresh();
   }
 
-  function handleEmailKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+  function handleCredentialsKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") handleSendCode();
   }
 
@@ -72,12 +96,15 @@ export function LoginForm({
       <GlowBackground variant="section" />
 
       <div className="relative">
-        <BackButton label={t("backToHome")} className="mb-8" />
+        <div className="mb-8 flex items-center gap-4">
+          <BackButton label={commonT("back")} />
+          <HomeButton label={commonT("home")} />
+        </div>
 
         <AnimatePresence mode="wait">
-          {step === "email" ? (
+          {step === "credentials" ? (
             <motion.div
-              key="email"
+              key="credentials"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
@@ -88,7 +115,9 @@ export function LoginForm({
                 <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
                   {isRegister ? t("registerTitle") : t("title")}
                 </h1>
-                <p className="text-sm leading-relaxed text-muted">{t("subtitle")}</p>
+                <p className="text-sm leading-relaxed text-muted">
+                  {isRegister ? t("registerSubtitle") : t("subtitle")}
+                </p>
               </div>
 
               <div className="flex flex-col gap-2">
@@ -101,11 +130,48 @@ export function LoginForm({
                   autoFocus
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={handleEmailKeyDown}
+                  onKeyDown={handleCredentialsKeyDown}
                   placeholder={t("emailPlaceholder")}
                   className="rounded-xl border border-line-strong bg-background px-4 py-3.5 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
                 />
               </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="password" className="text-xs font-medium uppercase tracking-[0.15em] text-muted">
+                  {t("passwordLabel")}
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete={isRegister ? "new-password" : "current-password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={handleCredentialsKeyDown}
+                  placeholder={t("passwordPlaceholder")}
+                  className="rounded-xl border border-line-strong bg-background px-4 py-3.5 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
+                />
+              </div>
+
+              {isRegister ? (
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="text-xs font-medium uppercase tracking-[0.15em] text-muted"
+                  >
+                    {t("confirmPasswordLabel")}
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onKeyDown={handleCredentialsKeyDown}
+                    placeholder={t("confirmPasswordPlaceholder")}
+                    className="rounded-xl border border-line-strong bg-background px-4 py-3.5 text-sm text-foreground outline-none transition-colors focus:border-blue-soft"
+                  />
+                </div>
+              ) : null}
 
               <label className="flex cursor-pointer items-center gap-2.5 text-sm text-muted select-none">
                 <input
@@ -185,7 +251,7 @@ export function LoginForm({
                 <button
                   type="button"
                   onClick={() => {
-                    setStep("email");
+                    setStep("credentials");
                     setCode("");
                     setErrorKey(null);
                   }}

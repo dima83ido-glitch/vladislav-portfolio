@@ -26,8 +26,12 @@ export type HeroStat = { value: number; suffix: string; label: LocalizedText };
 // ============================== Enums ==============================
 
 export const userRoleEnum = pgEnum("user_role", ["customer", "admin"]);
-export const userStatusEnum = pgEnum("user_status", ["active", "suspended"]);
-export const verificationPurposeEnum = pgEnum("verification_purpose", ["login"]);
+export const userStatusEnum = pgEnum("user_status", ["active", "suspended", "deleted"]);
+export const verificationPurposeEnum = pgEnum("verification_purpose", [
+  "login",
+  "register",
+  "password_reset",
+]);
 export const reviewStatusEnum = pgEnum("review_status", ["pending", "approved", "rejected"]);
 export const contentStatusEnum = pgEnum("content_status", ["draft", "published"]);
 export const periodKeyEnum = pgEnum("period_key", ["oneTime", "quote"]);
@@ -72,9 +76,31 @@ export const users = pgTable("users", {
   displayName: text("display_name"),
   username: text("username").unique(),
   status: userStatusEnum("status").notNull().default("active"),
+  /**
+   * Nullable: accounts created before password-backed auth shipped have no
+   * hash yet. See `loginRequestCode` in lib/auth/actions.ts for the
+   * claim-on-first-login path that backfills this for those accounts.
+   * NEVER select this column into anything that reaches a page/component —
+   * use `safeUserColumns` (below) for any user row a query returns for
+   * display.
+   */
+  passwordHash: text("password_hash"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 });
+
+/** Every column except `passwordHash` — use this instead of the bare `users`
+ * table reference whenever a query's result reaches a page or component. */
+export const safeUserColumns = {
+  id: users.id,
+  email: users.email,
+  role: users.role,
+  displayName: users.displayName,
+  username: users.username,
+  status: users.status,
+  createdAt: users.createdAt,
+  lastLoginAt: users.lastLoginAt,
+};
 
 export const verificationCodes = pgTable("verification_codes", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -303,6 +329,8 @@ export const supportMessages = pgTable("support_messages", {
 // ============================ Types ============================
 
 export type User = typeof users.$inferSelect;
+/** Shape returned by `safeUserColumns` — every query that surfaces a user row to a page/component should use this type, never `User`. */
+export type SafeUser = Omit<User, "passwordHash">;
 export type NewUser = typeof users.$inferInsert;
 export type VerificationCode = typeof verificationCodes.$inferSelect;
 export type Session = typeof sessions.$inferSelect;

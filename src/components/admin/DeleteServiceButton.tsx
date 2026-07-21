@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { deleteService } from "@/lib/cms/content/actions";
 
 export function DeleteServiceButton({ id }: { id: string }) {
   const router = useRouter();
+  const t = useTranslations("admin.common");
   const [isPending, setIsPending] = useState(false);
 
   async function handleDelete() {
-    if (!confirm("Delete this service permanently?")) return;
+    if (!confirm(t("confirmDeleteGeneric"))) return;
     setIsPending(true);
     await deleteService(id);
     setIsPending(false);
@@ -23,7 +25,7 @@ export function DeleteServiceButton({ id }: { id: string }) {
       disabled={isPending}
       className="font-medium text-red-400 transition-opacity hover:opacity-80 disabled:opacity-40"
     >
-      Delete
+      {t("delete")}
     </button>
   );
 }

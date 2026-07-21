@@ -1,17 +1,13 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import { getPaymentsByStatus } from "@/db/queries/payments";
 import { PaymentsTable } from "@/components/admin/PaymentsTable";
+import { getAdminLocale } from "@/lib/i18n/adminLocale";
 
-const TABS = [
-  { key: "awaiting_confirmation", label: "Awaiting confirmation" },
-  { key: "pending", label: "Pending" },
-  { key: "approved", label: "Approved" },
-  { key: "rejected", label: "Rejected" },
-  { key: "all", label: "All" },
-] as const;
+const TAB_KEYS = ["awaiting_confirmation", "pending", "approved", "rejected", "all"] as const;
 
-type Status = (typeof TABS)[number]["key"];
+type Status = (typeof TAB_KEYS)[number];
 
 export default async function AdminPaymentsPage({
   searchParams,
@@ -19,23 +15,26 @@ export default async function AdminPaymentsPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const { status: rawStatus } = await searchParams;
-  const status: Status = TABS.some((tab) => tab.key === rawStatus)
+  const status: Status = TAB_KEYS.some((key) => key === rawStatus)
     ? (rawStatus as Status)
     : "awaiting_confirmation";
 
   const rows = await getPaymentsByStatus(status);
 
+  const locale = await getAdminLocale();
+  const t = await getTranslations({ locale, namespace: "admin.payments" });
+
+  const tabs = TAB_KEYS.map((key) => ({ key, label: t(`tabs.${key}`) }));
+
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Payments</h1>
-        <p className="mt-1 text-sm text-muted">
-          Review and confirm crypto payments; card payments confirm automatically via Stripe.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="mt-1 text-sm text-muted">{t("subtitle")}</p>
       </div>
 
       <div className="flex items-center gap-2 overflow-x-auto border-b border-line">
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <Link
             key={tab.key}
             href={`/admin/payments?status=${tab.key}`}
