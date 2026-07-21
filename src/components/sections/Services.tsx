@@ -4,7 +4,6 @@ import { ServicesGrid, type NormalizedService } from "@/components/sections/Serv
 import { SERVICES } from "@/lib/data/services";
 import { getPublishedServices } from "@/db/queries/content";
 import { resolveLocalizedList, resolveLocalizedText } from "@/lib/cms/localized";
-import { resolveIcon } from "@/lib/cms/icons";
 
 export async function Services() {
   const t = await getTranslations("services");
@@ -15,7 +14,7 @@ export async function Services() {
     dbServices.length > 0
       ? dbServices.map((s, i) => ({
           id: s.id,
-          icon: resolveIcon(s.icon),
+          icon: s.icon,
           index: String(i + 1).padStart(2, "0"),
           title: resolveLocalizedText(s.title, locale),
           description: resolveLocalizedText(s.description, locale),

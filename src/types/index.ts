@@ -7,7 +7,8 @@ export type TechStack = {
 
 export type Service = {
   id: string;
-  icon: IconType;
+  /** Icon name resolved via src/lib/cms/icons.ts — a string, not a component reference (see Services.tsx for why). */
+  icon: string;
   index: string;
 };
 

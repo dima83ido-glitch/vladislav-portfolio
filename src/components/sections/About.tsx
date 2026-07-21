@@ -2,18 +2,18 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { FiLayers, FiPenTool, FiUsers, FiZap } from "react-icons/fi";
-import type { IconType } from "react-icons";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Marquee } from "@/components/ui/Marquee";
 import { SITE } from "@/lib/data/site";
 import { TECH_STACK } from "@/lib/data/skills";
+import { resolveIcon } from "@/lib/cms/icons";
 
 const DEFAULT_PHILOSOPHY_IDS = ["design-first", "performance", "full-stack", "partner"] as const;
-const DEFAULT_ICONS = [FiPenTool, FiZap, FiLayers, FiUsers];
+const DEFAULT_ICONS = ["pen-tool", "zap", "layers", "users"];
 
-export type AboutPhilosophyCard = { icon: IconType; title: string; description: string };
+/** icon is a name (string) — resolved to a component here, never crossed the server/client boundary as a function. */
+export type AboutPhilosophyCard = { icon: string; title: string; description: string };
 
 export function About({
   biography,
@@ -62,21 +62,24 @@ export function About({
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {cards.map((card, i) => (
-              <Reveal key={i} variant="scale" delay={i * 0.1}>
-                <motion.div
-                  whileHover={{ y: -6, borderColor: "rgba(122,162,255,0.5)" }}
-                  transition={{ duration: 0.3 }}
-                  className="flex h-full flex-col gap-4 rounded-2xl border border-line bg-surface/60 p-7"
-                >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-soft/10 text-blue-soft">
-                    <card.icon size={18} />
-                  </span>
-                  <h3 className="text-lg font-bold text-foreground">{card.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted">{card.description}</p>
-                </motion.div>
-              </Reveal>
-            ))}
+            {cards.map((card, i) => {
+              const Icon = resolveIcon(card.icon);
+              return (
+                <Reveal key={i} variant="scale" delay={i * 0.1}>
+                  <motion.div
+                    whileHover={{ y: -6, borderColor: "rgba(122,162,255,0.5)" }}
+                    transition={{ duration: 0.3 }}
+                    className="flex h-full flex-col gap-4 rounded-2xl border border-line bg-surface/60 p-7"
+                  >
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-soft/10 text-blue-soft">
+                      <Icon size={18} />
+                    </span>
+                    <h3 className="text-lg font-bold text-foreground">{card.title}</h3>
+                    <p className="text-sm leading-relaxed text-muted">{card.description}</p>
+                  </motion.div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
 

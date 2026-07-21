@@ -14,7 +14,6 @@ import { FAQ } from "@/components/sections/FAQ";
 import { Contact } from "@/components/sections/Contact";
 import { getAboutContent } from "@/db/queries/content";
 import { resolveLocalizedList, resolveLocalizedText } from "@/lib/cms/localized";
-import { resolveIcon } from "@/lib/cms/icons";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -41,7 +40,7 @@ export default async function Home({ params }: PageProps) {
 
   const philosophyCards: AboutPhilosophyCard[] | undefined = aboutContent
     ? aboutContent.philosophyCards.map((c) => ({
-        icon: resolveIcon(c.icon),
+        icon: c.icon,
         title: resolveLocalizedText(c.title, locale),
         description: resolveLocalizedText(c.description, locale),
       }))
