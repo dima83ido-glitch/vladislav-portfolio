@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { requireUserOrRedirect } from "@/lib/auth/session";
 import { getTicketsByUser } from "@/db/queries/support";
 import { TicketStatusBadge } from "@/components/account/TicketStatusBadge";
+import { MarkSectionRead } from "@/components/shared/MarkSectionRead";
 
 type PageProps = { params: Promise<{ locale: string }> };
 
@@ -26,6 +27,7 @@ export default async function SupportPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      <MarkSectionRead section="support" />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("title")}</h1>
         <Link

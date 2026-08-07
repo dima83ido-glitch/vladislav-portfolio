@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { requireUserOrRedirect } from "@/lib/auth/session";
 import { getOrdersByUser } from "@/db/queries/orders";
 import { OrderStatusBadge } from "@/components/account/OrderStatusBadge";
+import { MarkSectionRead } from "@/components/shared/MarkSectionRead";
 
 type PageProps = { params: Promise<{ locale: string }> };
 
@@ -26,6 +27,7 @@ export default async function OrdersPage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      <MarkSectionRead section="orders" />
       <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("title")}</h1>
 
       {orders.length === 0 ? (

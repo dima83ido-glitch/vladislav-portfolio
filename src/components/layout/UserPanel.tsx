@@ -9,10 +9,21 @@ import { FiArrowUpRight, FiLogOut, FiShield, FiShoppingBag, FiStar, FiUser } fro
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { logout } from "@/lib/auth/actions";
-import { cn, initials } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { UserAvatar } from "@/components/shared/UserAvatar";
+import { UnreadBadge } from "@/components/shared/UnreadBadge";
 
-type PanelUser = { email: string; role: "admin" | "customer"; displayName: string | null };
+type PanelUser = {
+  email: string;
+  role: "admin" | "customer";
+  displayName: string | null;
+  avatarUrl?: string | null;
+  avatarEmoji?: string | null;
+  unreadOrders?: number;
+  unreadSupport?: number;
+  unreadAdminTotal?: number;
+};
 
 export function UserPanel({ user }: { user: PanelUser }) {
   const t = useTranslations("panel");
@@ -29,11 +40,13 @@ export function UserPanel({ user }: { user: PanelUser }) {
   }
 
   const links = [
-    { key: "profile", href: "/account", icon: FiUser },
-    { key: "myOrders", href: "/account/orders", icon: FiShoppingBag },
-    { key: "support", href: "/account/support", icon: FiShield },
-    { key: "leaveReview", href: "/#reviews", icon: FiStar },
+    { key: "profile", href: "/account", icon: FiUser, unread: 0 },
+    { key: "myOrders", href: "/account/orders", icon: FiShoppingBag, unread: user.unreadOrders ?? 0 },
+    { key: "support", href: "/account/support", icon: FiShield, unread: user.unreadSupport ?? 0 },
+    { key: "leaveReview", href: "/#reviews", icon: FiStar, unread: 0 },
   ];
+
+  const totalUnread = (user.unreadOrders ?? 0) + (user.unreadSupport ?? 0);
 
   // Admin lives outside the [locale] segment (it's an English-only internal
   // tool), so this link deliberately uses the plain (non-locale-prefixed)
@@ -47,13 +60,22 @@ export function UserPanel({ user }: { user: PanelUser }) {
         type="button"
         onClick={() => setIsOpen(true)}
         aria-label={t("profile")}
-        className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-full border border-line-strong",
-          "text-sm font-semibold text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
-        )}
+        className="relative rounded-full"
         data-cursor-pointer
       >
-        {initials(user)}
+        <span className="block overflow-hidden rounded-full">
+          <UserAvatar
+            user={user}
+            size={40}
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full border border-line-strong",
+              "text-sm font-semibold text-foreground transition-colors hover:border-blue-soft hover:text-blue-soft"
+            )}
+          />
+        </span>
+        <span className="absolute -right-1 -top-1">
+          <UnreadBadge count={totalUnread} />
+        </span>
       </button>
 
       <AnimatePresence>
@@ -75,9 +97,11 @@ export function UserPanel({ user }: { user: PanelUser }) {
               className="fixed inset-y-4 right-4 z-[80] flex w-[calc(100%-2rem)] max-w-sm flex-col rounded-3xl border border-line-strong bg-surface px-8 py-10 shadow-2xl shadow-black/50"
             >
               <div className="flex items-center gap-4 border-b border-line pb-6">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-soft/10 text-lg font-bold text-blue-soft">
-                  {initials(user)}
-                </span>
+                <UserAvatar
+                  user={user}
+                  size={56}
+                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-soft/10 text-lg font-bold text-blue-soft"
+                />
                 <div className="flex flex-col overflow-hidden">
                   <span className="truncate font-semibold text-foreground">
                     {user.displayName || user.email.split("@")[0]}
@@ -116,6 +140,7 @@ export function UserPanel({ user }: { user: PanelUser }) {
                     >
                       <link.icon size={17} />
                       {t(link.key)}
+                      <UnreadBadge count={link.unread} />
                     </Link>
                   </motion.div>
                 ))}
@@ -132,6 +157,7 @@ export function UserPanel({ user }: { user: PanelUser }) {
                     >
                       <adminLink.icon size={17} />
                       {t(adminLink.key)}
+                      <UnreadBadge count={user.unreadAdminTotal ?? 0} />
                     </NextLink>
                   </motion.div>
                 ) : null}

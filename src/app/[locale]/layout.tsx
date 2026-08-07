@@ -8,6 +8,7 @@ import "../globals.css";
 import { routing } from "@/i18n/routing";
 import { SITE } from "@/lib/data/site";
 import { getSession } from "@/lib/auth/session";
+import { getUnreadCounts } from "@/db/queries/notifications";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { CustomCursor } from "@/components/layout/CustomCursor";
 import { LoadingScreen } from "@/components/layout/LoadingScreen";
@@ -117,11 +118,18 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   setRequestLocale(locale);
 
   const session = await getSession();
+  const unreadCounts = session ? await getUnreadCounts(session.user.id) : null;
   const headerUser = session
     ? {
         email: session.user.email,
         role: session.user.role,
         displayName: session.user.displayName,
+        avatarUrl: session.user.avatarUrl,
+        avatarEmoji: session.user.avatarEmoji,
+        unreadOrders: unreadCounts!.orders,
+        unreadSupport: unreadCounts!.support,
+        unreadAdminTotal:
+          session.user.role === "admin" ? unreadCounts!.support + unreadCounts!.orders : 0,
       }
     : null;
 

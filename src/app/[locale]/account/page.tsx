@@ -6,7 +6,7 @@ import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { requireUserOrRedirect } from "@/lib/auth/session";
 import { getOrderStats } from "@/db/queries/orders";
-import { initials } from "@/lib/utils";
+import { AvatarSection } from "@/components/account/AvatarSection";
 import { ProfileEditForm } from "@/components/account/ProfileEditForm";
 import { SecuritySection } from "@/components/account/SecuritySection";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
@@ -37,9 +37,7 @@ export default async function ProfilePage({ params }: PageProps) {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-6 rounded-3xl border border-line bg-surface/60 p-8">
         <div className="flex flex-wrap items-center gap-5">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-soft/10 text-xl font-bold text-blue-soft">
-            {initials(session.user)}
-          </span>
+          <AvatarSection user={session.user} />
           <div className="flex flex-col gap-1">
             <span className="text-lg font-bold text-foreground">
               {session.user.displayName || session.user.email.split("@")[0]}

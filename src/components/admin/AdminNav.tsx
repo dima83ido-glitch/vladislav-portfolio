@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { UnreadBadge } from "@/components/shared/UnreadBadge";
 
 const LINKS = [
   { href: "/admin", key: "overview" },
@@ -18,7 +19,7 @@ const LINKS = [
   { href: "/admin/settings", key: "settings" },
 ] as const;
 
-export function AdminNav() {
+export function AdminNav({ supportUnread = 0 }: { supportUnread?: number }) {
   const pathname = usePathname();
   const t = useTranslations("admin.nav");
 
@@ -31,11 +32,12 @@ export function AdminNav() {
             key={link.href}
             href={link.href}
             className={cn(
-              "text-sm font-medium transition-colors",
+              "flex items-center gap-1.5 text-sm font-medium transition-colors",
               isActive ? "text-blue-soft" : "text-muted hover:text-foreground"
             )}
           >
             {t(link.key)}
+            {link.key === "support" ? <UnreadBadge count={supportUnread} /> : null}
           </Link>
         );
       })}

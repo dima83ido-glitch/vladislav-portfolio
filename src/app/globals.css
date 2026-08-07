@@ -25,6 +25,7 @@
   --color-blue: var(--blue);
   --color-blue-soft: var(--blue-soft);
   --color-blue-dim: var(--blue-dim);
+  --color-blue-glow: var(--blue-glow);
 
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);

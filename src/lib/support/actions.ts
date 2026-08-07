@@ -6,6 +6,7 @@ import { getDb } from "@/db/client";
 import { supportMessages, supportTickets } from "@/db/schema";
 import { requireAdmin, requireUser } from "@/lib/auth/session";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { notifyAdmins, notifyUser } from "@/db/queries/notifications";
 import { createTicketSchema, replySchema } from "./validation";
 
 const TICKET_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
@@ -48,6 +49,8 @@ export async function createTicket(
       body: parsed.data.body,
     });
 
+    await notifyAdmins("support", "new_ticket", ticket.id, session.user.id);
+
     revalidatePath("/account/support");
     revalidatePath("/admin/support");
 
@@ -56,17 +59,6 @@ export async function createTicket(
     console.error("Failed to create ticket:", error);
     return { ok: false, error: "generic" };
   }
-}
-
-async function assertTicketAccess(ticketId: string, userId: string, isAdmin: boolean) {
-  if (isAdmin) return true;
-  const db = getDb();
-  const [ticket] = await db
-    .select({ userId: supportTickets.userId })
-    .from(supportTickets)
-    .where(eq(supportTickets.id, ticketId))
-    .limit(1);
-  return ticket?.userId === userId;
 }
 
 export async function replyToTicket(
@@ -85,8 +77,14 @@ export async function replyToTicket(
   }
 
   const isAdmin = session.user.role === "admin";
-  const hasAccess = await assertTicketAccess(parsed.data.ticketId, session.user.id, isAdmin);
-  if (!hasAccess) {
+  const db = getDb();
+  const [ticket] = await db
+    .select({ userId: supportTickets.userId })
+    .from(supportTickets)
+    .where(eq(supportTickets.id, parsed.data.ticketId))
+    .limit(1);
+
+  if (!ticket || (!isAdmin && ticket.userId !== session.user.id)) {
     return { ok: false, error: "forbidden" };
   }
 
@@ -100,7 +98,6 @@ export async function replyToTicket(
   }
 
   try {
-    const db = getDb();
     await db.insert(supportMessages).values({
       ticketId: parsed.data.ticketId,
       authorId: session.user.id,
@@ -114,6 +111,12 @@ export async function replyToTicket(
         updatedAt: new Date(),
       })
       .where(eq(supportTickets.id, parsed.data.ticketId));
+
+    if (isAdmin) {
+      await notifyUser(ticket.userId, "support", "support_reply", parsed.data.ticketId);
+    } else {
+      await notifyAdmins("support", "support_reply", parsed.data.ticketId, session.user.id);
+    }
 
     revalidatePath(`/account/support/${parsed.data.ticketId}`);
     revalidatePath("/admin/support");

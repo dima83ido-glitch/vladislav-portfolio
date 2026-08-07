@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { postOrderMessage } from "@/lib/orders/actions";
-import { initials } from "@/lib/utils";
+import { UserAvatar } from "@/components/shared/UserAvatar";
 
 type MessageRow = {
   message: { id: string; body: string; createdAt: Date };
-  author: { email: string; displayName: string | null };
+  author: { email: string; displayName: string | null; avatarUrl?: string | null; avatarEmoji?: string | null };
 };
 
 export function OrderMessages({
@@ -52,9 +52,11 @@ export function OrderMessages({
       <div className="flex flex-col gap-4">
         {messages.map(({ message, author }) => (
           <div key={message.id} className="flex items-start gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-soft/10 text-xs font-bold text-blue-soft">
-              {initials(author)}
-            </span>
+            <UserAvatar
+              user={author}
+              size={32}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-soft/10 text-xs font-bold text-blue-soft"
+            />
             <div className="flex flex-col gap-1">
               <span className="text-xs font-medium text-muted">
                 {author.email === currentUserEmail ? "" : author.displayName || author.email}

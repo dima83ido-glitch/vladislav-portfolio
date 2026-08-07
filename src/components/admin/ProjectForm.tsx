@@ -35,6 +35,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
   });
   const [technologies, setTechnologies] = useState(project?.technologies.join(", ") ?? "");
   const [coverImageUrl, setCoverImageUrl] = useState(project?.coverImageUrl ?? "");
+  const [coverImagePublicId, setCoverImagePublicId] = useState(project?.coverImagePublicId ?? "");
   const [videoUrl, setVideoUrl] = useState(project?.videoUrl ?? "");
   const [liveUrl, setLiveUrl] = useState(project?.liveUrl ?? "");
   const [githubUrl, setGithubUrl] = useState(project?.githubUrl ?? "");
@@ -60,10 +61,21 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
     setIsUploading(false);
 
     if (!result.ok) {
-      setError(result.error === "notConfigured" ? pt("mediaNotConfigured") : pt("uploadFailed"));
+      const errorKey =
+        result.error === "notConfigured"
+          ? "mediaNotConfigured"
+          : result.error === "tooLarge"
+            ? "uploadTooLarge"
+            : result.error === "unsupportedFormat" || result.error === "broken"
+              ? "uploadUnsupportedFormat"
+              : result.error === "rateLimited"
+                ? "uploadRateLimited"
+                : "uploadFailed";
+      setError(pt(errorKey));
       return;
     }
     setCoverImageUrl(result.url);
+    setCoverImagePublicId(result.publicId);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -84,6 +96,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
         .map((t) => t.trim())
         .filter(Boolean),
       coverImageUrl,
+      coverImagePublicId,
       videoUrl,
       liveUrl,
       githubUrl,
@@ -119,7 +132,7 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
           value={slug}
           onChange={(e) => setSlug(e.target.value.toLowerCase())}
           required
-          placeholder="nordholm-capital"
+          placeholder="my-client-project"
           className="rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-blue-soft"
         />
       </div>
@@ -174,7 +187,13 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
         </div>
         <input
           value={coverImageUrl}
-          onChange={(e) => setCoverImageUrl(e.target.value)}
+          onChange={(e) => {
+            setCoverImageUrl(e.target.value);
+            // Only a publicId that came back from an actual upload response is
+            // ever trusted for later cleanup — a manually pasted URL might not
+            // even be a Cloudinary asset, so never carry a stale publicId into it.
+            setCoverImagePublicId("");
+          }}
           placeholder={pt("orPasteUrl")}
           className="rounded-xl border border-line-strong bg-background px-4 py-2.5 text-sm text-foreground outline-none focus:border-blue-soft"
         />

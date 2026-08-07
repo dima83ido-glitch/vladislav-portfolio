@@ -6,20 +6,11 @@ import { getDb } from "@/db/client";
 import { orderMessages, orders } from "@/db/schema";
 import { requireUser } from "@/lib/auth/session";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { notifyAdmins, notifyUser } from "@/db/queries/notifications";
 import { orderMessageSchema } from "./validation";
 
 const MESSAGE_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const MESSAGE_RATE_LIMIT = 20;
-
-async function assertOrderAccess(orderId: string, userId: string, isAdmin: boolean) {
-  if (isAdmin) return true;
-  const [order] = await getDb()
-    .select({ userId: orders.userId })
-    .from(orders)
-    .where(eq(orders.id, orderId))
-    .limit(1);
-  return order?.userId === userId;
-}
 
 export async function postOrderMessage(
   input: unknown
@@ -37,8 +28,14 @@ export async function postOrderMessage(
   }
 
   const isAdmin = session.user.role === "admin";
-  const hasAccess = await assertOrderAccess(parsed.data.orderId, session.user.id, isAdmin);
-  if (!hasAccess) {
+  const db = getDb();
+  const [order] = await db
+    .select({ userId: orders.userId })
+    .from(orders)
+    .where(eq(orders.id, parsed.data.orderId))
+    .limit(1);
+
+  if (!order || (!isAdmin && order.userId !== session.user.id)) {
     return { ok: false, error: "forbidden" };
   }
 
@@ -52,11 +49,17 @@ export async function postOrderMessage(
   }
 
   try {
-    await getDb().insert(orderMessages).values({
+    await db.insert(orderMessages).values({
       orderId: parsed.data.orderId,
       authorId: session.user.id,
       body: parsed.data.body,
     });
+
+    if (isAdmin) {
+      await notifyUser(order.userId, "orders", "order_message", parsed.data.orderId);
+    } else {
+      await notifyAdmins("orders", "order_message", parsed.data.orderId, session.user.id);
+    }
 
     revalidatePath(`/account/orders/${parsed.data.orderId}`);
     revalidatePath(`/admin/orders/${parsed.data.orderId}`);

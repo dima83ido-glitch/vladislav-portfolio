@@ -3,6 +3,7 @@ import { searchUsers, type UserStatusFilter } from "@/db/queries/users";
 import { requireAdminOrRedirect } from "@/lib/auth/session";
 import { UserStatusToggle } from "@/components/admin/UserStatusToggle";
 import { DeleteUserButton } from "@/components/admin/DeleteUserButton";
+import { UserAvatar } from "@/components/shared/UserAvatar";
 import { getAdminLocale } from "@/lib/i18n/adminLocale";
 
 const STATUS_FILTERS: UserStatusFilter[] = ["active", "suspended", "deleted", "all"];
@@ -65,31 +66,38 @@ export default async function AdminUsersPage({
               key={user.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface/60 p-5"
             >
-              <div>
-                <div className="flex items-center gap-3">
-                  <span className="font-semibold text-foreground">{user.displayName || user.email}</span>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-                      user.role === "admin" ? "bg-blue-soft/10 text-blue-soft" : "bg-line/60 text-muted"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      user.status === "active"
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : user.status === "suspended"
-                          ? "bg-red-500/10 text-red-400"
-                          : "bg-line/60 text-muted"
-                    }`}
-                  >
-                    {t(`status.${user.status}`)}
+              <div className="flex items-center gap-3">
+                <UserAvatar
+                  user={user}
+                  size={36}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-soft/10 text-xs font-bold text-blue-soft"
+                />
+                <div>
+                  <div className="flex items-center gap-3">
+                    <span className="font-semibold text-foreground">{user.displayName || user.email}</span>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
+                        user.role === "admin" ? "bg-blue-soft/10 text-blue-soft" : "bg-line/60 text-muted"
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        user.status === "active"
+                          ? "bg-emerald-500/10 text-emerald-400"
+                          : user.status === "suspended"
+                            ? "bg-red-500/10 text-red-400"
+                            : "bg-line/60 text-muted"
+                      }`}
+                    >
+                      {t(`status.${user.status}`)}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted">
+                    {user.email} · {t("joined", { date: new Intl.DateTimeFormat(locale).format(user.createdAt) })}
                   </span>
                 </div>
-                <span className="text-xs text-muted">
-                  {user.email} · {t("joined", { date: new Intl.DateTimeFormat(locale).format(user.createdAt) })}
-                </span>
               </div>
               {user.id !== session.user.id ? (
                 <div className="flex items-center gap-4">

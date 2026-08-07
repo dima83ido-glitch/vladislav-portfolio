@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import "../globals.css";
 import { requireAdminOrRedirect } from "@/lib/auth/session";
 import { logoutAndRedirect } from "@/lib/auth/actions";
+import { getUnreadCounts } from "@/db/queries/notifications";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { AdminLanguageSwitcher } from "@/components/admin/AdminLanguageSwitcher";
 import { SITE } from "@/lib/data/site";
@@ -21,7 +22,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireAdminOrRedirect();
+  const session = await requireAdminOrRedirect();
+  const unreadCounts = await getUnreadCounts(session.user.id);
 
   const locale = await getAdminLocale();
   const messages = await getAdminMessages(locale);
@@ -44,7 +46,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     {t("brand")}
                     <span className="text-blue-soft">.</span>
                   </span>
-                  <AdminNav />
+                  <AdminNav supportUnread={unreadCounts.support} />
                 </div>
                 <div className="flex items-center gap-4">
                   <AdminLanguageSwitcher />

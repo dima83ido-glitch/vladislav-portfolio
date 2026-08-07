@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getAllTickets } from "@/db/queries/support";
 import { getAdminLocale } from "@/lib/i18n/adminLocale";
+import { MarkSectionRead } from "@/components/shared/MarkSectionRead";
 
 const STATUS_STYLES: Record<string, string> = {
   open: "bg-amber-500/10 text-amber-400",
@@ -18,6 +19,7 @@ export default async function AdminSupportPage() {
 
   return (
     <div className="flex flex-col gap-8">
+      <MarkSectionRead section="support" />
       <div>
         <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted">{t("subtitle")}</p>

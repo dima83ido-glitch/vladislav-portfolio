@@ -24,6 +24,7 @@ export const projectSchema = z.object({
   results: localizedTextOptional.optional(),
   technologies: z.array(z.string().trim().min(1)).max(12),
   coverImageUrl: z.string().trim().url().optional().or(z.literal("")),
+  coverImagePublicId: z.string().trim().optional().or(z.literal("")),
   videoUrl: z.string().trim().url().optional().or(z.literal("")),
   liveUrl: z.string().trim().url().optional().or(z.literal("")),
   githubUrl: z.string().trim().url().optional().or(z.literal("")),

@@ -2,7 +2,7 @@
   "site": {
     "role": "Full-Stack Web Developer",
     "location": "Available worldwide · Remote",
-    "description": "Vladislav is a freelance full-stack web developer crafting premium landing pages, dashboards, corporate websites and Telegram Web Apps for founders and teams who refuse to ship anything average.",
+    "description": "We create premium websites — designed and developed end-to-end to deliver real business results.",
     "shortDescription": "Premium websites and web apps, designed and engineered end-to-end."
   },
   "seo": {
@@ -45,7 +45,8 @@
   },
   "common": {
     "back": "Back",
-    "home": "Home"
+    "home": "Home",
+    "unreadCount": "{count} unread"
   },
   "footer": {
     "ctaLine1": "Let's build something",
@@ -63,6 +64,7 @@
     "headline1": "Design.",
     "headline2": "Code.",
     "headline3": "Result.",
+    "orderWebsite": "Order a Website",
     "viewProjects": "View Projects",
     "contactMe": "Contact Me",
     "scroll": "Scroll",
@@ -153,38 +155,8 @@
     "title": "Selected work, shipped and live",
     "italicWord": "live",
     "description": "A sample of recent case studies across landing pages, dashboards, e-commerce, and Telegram Web Apps.",
-    "items": {
-      "nordholm": {
-        "title": "Nordholm Capital",
-        "category": "Corporate Website",
-        "description": "A confidence-building presence for a private investment firm — restrained typography, real-time market data widgets, and a data room gated behind secure access."
-      },
-      "auravest": {
-        "title": "Auravest Dashboard",
-        "category": "Dashboard",
-        "description": "A portfolio analytics dashboard for retail investors — live positions, risk breakdowns, and custom alerting rendered through streaming WebSocket data."
-      },
-      "loop-market": {
-        "title": "Loop Market",
-        "category": "Business Website",
-        "description": "E-commerce storefront for a direct-to-consumer skincare brand — built for speed, with sub-second product transitions and a checkout tuned for mobile."
-      },
-      "havenly": {
-        "title": "Havenly Stays",
-        "category": "Landing Page",
-        "description": "A single-page launch site for a boutique hospitality brand — cinematic imagery, scroll-driven storytelling, and a waitlist that converted at 12%."
-      },
-      "pulsepay": {
-        "title": "PulsePay Mini App",
-        "category": "Telegram Web App",
-        "description": "A peer-to-peer payments Mini App living entirely inside Telegram — balance management, transfer flows, and biometric-style confirmation, all native-feeling."
-      },
-      "atlasops": {
-        "title": "AtlasOps",
-        "category": "Custom Development",
-        "description": "An internal logistics platform replacing three disconnected spreadsheets — route planning, fleet status, and automated client reporting in one system."
-      }
-    }
+    "empty": "No projects have been published yet.",
+    "emptyDescription": "Check back soon — new work will appear here as it ships."
   },
   "process": {
     "eyebrow": "Process",
@@ -517,6 +489,33 @@
         "currentOrders": "Current orders",
         "totalSpent": "Total spent"
       },
+      "avatar": {
+        "editButton": "Edit Avatar",
+        "modalTitle": "Choose your avatar",
+        "close": "Close",
+        "tabs": {
+          "builtin": "Built-in",
+          "upload": "Upload"
+        },
+        "builtinHint": "Pick one of our built-in avatars",
+        "uploadHint": "Drag & drop an image, or click to browse",
+        "uploadFormats": "PNG, JPG or WEBP — up to 5MB",
+        "uploadButton": "Upload",
+        "uploading": "Uploading…",
+        "chooseFile": "Choose file",
+        "changeFile": "Choose a different file",
+        "resetButton": "Reset to initials",
+        "success": "Avatar updated.",
+        "errors": {
+          "invalid": "Something went wrong. Please try again.",
+          "notConfigured": "Avatar uploads aren't configured yet.",
+          "tooLarge": "That image is too large — max 5MB.",
+          "unsupportedFormat": "Please upload a PNG, JPG or WEBP image.",
+          "broken": "That file doesn't look like a valid image.",
+          "rateLimited": "Too many changes — please wait a moment and try again.",
+          "generic": "Something went wrong. Please try again."
+        }
+      },
       "security": {
         "title": "Security",
         "emailLabel": "Email",
@@ -797,7 +796,7 @@
       "new": "New project",
       "newTitle": "New project",
       "editTitle": "Edit project",
-      "empty": "No projects yet — the public site is showing its built-in default case studies until you add some here.",
+      "empty": "No projects yet — add your first case study to publish it on the site.",
       "technologies": "Technologies (comma-separated)",
       "coverImage": "Cover image",
       "upload": "Upload",
@@ -808,6 +807,9 @@
       "githubUrl": "GitHub URL",
       "mediaNotConfigured": "Media storage isn't configured yet (set CLOUDINARY_* env vars).",
       "uploadFailed": "Upload failed.",
+      "uploadTooLarge": "That image is too large — max 8MB.",
+      "uploadUnsupportedFormat": "Please upload a PNG, JPG or WEBP image.",
+      "uploadRateLimited": "Too many uploads — please wait a moment and try again.",
       "create": "Create project"
     },
     "pricing": {

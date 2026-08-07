@@ -4,14 +4,15 @@ import { useTranslations } from "next-intl";
 import { FiLifeBuoy, FiShoppingBag, FiUser } from "react-icons/fi";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { UnreadBadge } from "@/components/shared/UnreadBadge";
 
 const LINKS = [
-  { key: "profile", href: "/account", icon: FiUser },
-  { key: "orders", href: "/account/orders", icon: FiShoppingBag },
-  { key: "support", href: "/account/support", icon: FiLifeBuoy },
-];
+  { key: "profile", href: "/account", icon: FiUser, unreadKey: null },
+  { key: "orders", href: "/account/orders", icon: FiShoppingBag, unreadKey: "orders" },
+  { key: "support", href: "/account/support", icon: FiLifeBuoy, unreadKey: "support" },
+] as const;
 
-export function AccountNav() {
+export function AccountNav({ unreadCounts }: { unreadCounts: { support: number; orders: number } }) {
   const t = useTranslations("account.nav");
   const pathname = usePathname();
 
@@ -33,6 +34,7 @@ export function AccountNav() {
           >
             <link.icon size={16} />
             {t(link.key)}
+            {link.unreadKey ? <UnreadBadge count={unreadCounts[link.unreadKey]} /> : null}
           </Link>
         );
       })}

@@ -78,34 +78,65 @@ export function Hero({ stats }: { stats?: HeroStat[] }) {
           {siteT("role")} · {siteT("location")}
         </motion.span>
 
-        <h1 className="flex flex-col text-[16vw] font-extrabold leading-[0.98] tracking-tighter text-foreground sm:text-[11vw] lg:text-[8.5vw]">
-          <motion.span
-            className="overflow-hidden pb-[0.12em]"
-            initial={{ y: "110%" }}
-            animate={{ y: "0%" }}
-            transition={{ duration: 1, delay: 2.1, ease: [0.16, 1, 0.3, 1] }}
+        <div className="flex flex-col items-start gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+          <h1 className="flex flex-col text-[16vw] font-extrabold leading-[0.98] tracking-tighter text-foreground sm:text-[11vw] lg:text-[8.5vw]">
+            <motion.span
+              className="overflow-hidden pb-[0.12em]"
+              initial={{ y: "110%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1, delay: 2.1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="block">{t("headline1")}</span>
+            </motion.span>
+            <motion.span
+              className="overflow-hidden pb-[0.12em]"
+              initial={{ y: "110%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1, delay: 2.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="block font-thin text-foreground/90">{t("headline2")}</span>
+            </motion.span>
+            <motion.span
+              className="overflow-hidden pb-[0.12em]"
+              initial={{ y: "110%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 1, delay: 2.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="font-serif-italic block font-normal text-blue-soft">
+                {t("headline3")}
+              </span>
+            </motion.span>
+          </h1>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 2.55, ease: [0.16, 1, 0.3, 1] }}
+            className="group relative w-full shrink-0 lg:w-[min(92vw,380px)]"
           >
-            <span className="block">{t("headline1")}</span>
-          </motion.span>
-          <motion.span
-            className="overflow-hidden pb-[0.12em]"
-            initial={{ y: "110%" }}
-            animate={{ y: "0%" }}
-            transition={{ duration: 1, delay: 2.25, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="block font-thin text-foreground/90">{t("headline2")}</span>
-          </motion.span>
-          <motion.span
-            className="overflow-hidden pb-[0.12em]"
-            initial={{ y: "110%" }}
-            animate={{ y: "0%" }}
-            transition={{ duration: 1, delay: 2.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="font-serif-italic block font-normal text-blue-soft">
-              {t("headline3")}
-            </span>
-          </motion.span>
-        </h1>
+            <div
+              aria-hidden="true"
+              className="absolute -inset-4 -z-10 rounded-[3rem] bg-blue-soft/30 opacity-60 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
+            />
+            <MagneticButton
+              as="link"
+              href="/pricing"
+              strength={0.3}
+              className="relative isolate flex w-full flex-col items-center justify-center gap-4 overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-blue-soft to-blue px-10 py-12 text-center shadow-2xl shadow-blue-glow/50 transition-transform duration-500 hover:scale-[1.03] active:scale-[0.96] sm:px-14 sm:py-14 lg:py-16"
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-tr from-white/0 via-white/15 to-white/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              />
+              <span className="text-3xl font-extrabold leading-[1.05] tracking-tight text-background sm:text-4xl lg:text-[2.6vw]">
+                {t("orderWebsite")}
+              </span>
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-background/15 text-background transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
+                <FiArrowUpRight size={22} />
+              </span>
+            </MagneticButton>
+          </motion.div>
+        </div>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}

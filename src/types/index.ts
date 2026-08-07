@@ -12,14 +12,6 @@ export type Service = {
   index: string;
 };
 
-export type Project = {
-  id: string;
-  image: string;
-  tech: string[];
-  year: string;
-  href: string;
-};
-
 export type ProcessStep = {
   id: string;
   number: string;

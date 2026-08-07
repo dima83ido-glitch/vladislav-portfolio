@@ -16,6 +16,11 @@ type HeaderUser = {
   email: string;
   role: "admin" | "customer";
   displayName: string | null;
+  avatarUrl?: string | null;
+  avatarEmoji?: string | null;
+  unreadOrders?: number;
+  unreadSupport?: number;
+  unreadAdminTotal?: number;
 } | null;
 
 export function Header({ user = null }: { user?: HeaderUser }) {

@@ -4,6 +4,7 @@ import { getDb } from "@/db/client";
 import { orders, payments } from "@/db/schema";
 import { getStripeClient, isStripeConfigured } from "@/lib/payments/stripe";
 import { sendOrderPaidEmail } from "@/lib/email/resend";
+import { notifyUser } from "@/db/queries/notifications";
 
 /**
  * Stripe calls this directly over HTTP with a `stripe-signature` header —
@@ -48,11 +49,15 @@ export async function POST(request: NextRequest) {
       await db.update(orders).set({ status: "paid", updatedAt: new Date() }).where(eq(orders.id, orderId));
 
       const [row] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
-      if (row && session.customer_email) {
-        try {
-          await sendOrderPaidEmail(session.customer_email, row.title);
-        } catch (error) {
-          console.error("Failed to send order-paid email:", error);
+      if (row) {
+        await notifyUser(row.userId, "orders", "order_status", orderId);
+
+        if (session.customer_email) {
+          try {
+            await sendOrderPaidEmail(session.customer_email, row.title);
+          } catch (error) {
+            console.error("Failed to send order-paid email:", error);
+          }
         }
       }
     }

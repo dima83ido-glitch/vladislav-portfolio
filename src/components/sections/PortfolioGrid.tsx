@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FiArrowUpRight } from "react-icons/fi";
+import { useTranslations } from "next-intl";
+import { FiArrowUpRight, FiFolder } from "react-icons/fi";
 import { Reveal } from "@/components/ui/Reveal";
 
 export type NormalizedProject = {
@@ -17,6 +18,22 @@ export type NormalizedProject = {
 };
 
 export function PortfolioGrid({ projects }: { projects: NormalizedProject[] }) {
+  const t = useTranslations("portfolio");
+
+  if (projects.length === 0) {
+    return (
+      <Reveal variant="up" className="mt-20">
+        <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-line-strong bg-surface/40 px-8 py-24 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-soft/10 text-blue-soft">
+            <FiFolder size={24} />
+          </span>
+          <p className="text-lg font-semibold text-foreground">{t("empty")}</p>
+          <p className="max-w-sm text-sm text-muted">{t("emptyDescription")}</p>
+        </div>
+      </Reveal>
+    );
+  }
+
   return (
     <div className="mt-20 grid grid-cols-1 gap-x-8 gap-y-20 md:grid-cols-2">
       {projects.map((project, i) => {

@@ -66,6 +66,7 @@ export const ticketStatusEnum = pgEnum("ticket_status", [
   "awaiting_user",
   "closed",
 ]);
+export const notificationSectionEnum = pgEnum("notification_section", ["support", "orders"]);
 
 // ========================== Auth / identity ==========================
 
@@ -85,6 +86,15 @@ export const users = pgTable("users", {
    * display.
    */
   passwordHash: text("password_hash"),
+  /**
+   * At most one of these two is ever set — picking one clears the other.
+   * Both null falls back to the initials badge. `avatarUrl` is a Cloudinary
+   * `secure_url`; `avatarEmoji` is one of BUILTIN_AVATARS (src/lib/account/avatar.ts).
+   */
+  avatarUrl: text("avatar_url"),
+  avatarEmoji: text("avatar_emoji"),
+  /** Cloudinary public_id for `avatarUrl` — lets a replaced/removed avatar's old asset be deleted by ID instead of parsed back out of the URL. Null whenever avatarUrl is null. */
+  avatarPublicId: text("avatar_public_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 });
@@ -98,6 +108,9 @@ export const safeUserColumns = {
   displayName: users.displayName,
   username: users.username,
   status: users.status,
+  avatarUrl: users.avatarUrl,
+  avatarEmoji: users.avatarEmoji,
+  avatarPublicId: users.avatarPublicId,
   createdAt: users.createdAt,
   lastLoginAt: users.lastLoginAt,
 };
@@ -182,6 +195,8 @@ export const portfolioProjects = pgTable("portfolio_projects", {
     .notNull()
     .default(sql`'{}'::text[]`),
   coverImageUrl: text("cover_image_url"),
+  /** Cloudinary public_id for coverImageUrl — null when the URL was pasted manually rather than uploaded, or when there's no cover image. */
+  coverImagePublicId: text("cover_image_public_id"),
   videoUrl: text("video_url"),
   liveUrl: text("live_url"),
   githubUrl: text("github_url"),
@@ -323,6 +338,27 @@ export const supportMessages = pgTable("support_messages", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ======================= Notifications =======================
+
+/**
+ * One row per recipient per event — a new ticket notifies every admin as N
+ * separate rows, not one shared row. `section` is the badge/mark-as-read
+ * grouping key (Support, My Orders); `resourceId` points at the ticket or
+ * order the event is about, `kind` at what happened (see
+ * src/db/queries/notifications.ts for the fixed set of kinds in use).
+ */
+export const notifications = pgTable("notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  section: notificationSectionEnum("section").notNull(),
+  kind: text("kind").notNull(),
+  resourceId: uuid("resource_id"),
+  isRead: boolean("is_read").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

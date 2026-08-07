@@ -5,11 +5,17 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { replyToTicket } from "@/lib/support/actions";
-import { initials } from "@/lib/utils";
+import { UserAvatar } from "@/components/shared/UserAvatar";
 
 type MessageRow = {
   message: { id: string; body: string; createdAt: Date };
-  author: { email: string; displayName: string | null; role: "admin" | "customer" };
+  author: {
+    email: string;
+    displayName: string | null;
+    role: "admin" | "customer";
+    avatarUrl?: string | null;
+    avatarEmoji?: string | null;
+  };
 };
 
 export function TicketThread({
@@ -54,9 +60,11 @@ export function TicketThread({
             key={message.id}
             className={`flex items-start gap-3 ${author.role === "admin" ? "flex-row-reverse" : ""}`}
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-soft/10 text-xs font-bold text-blue-soft">
-              {initials(author)}
-            </span>
+            <UserAvatar
+              user={author}
+              size={32}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-soft/10 text-xs font-bold text-blue-soft"
+            />
             <div className={`flex max-w-[80%] flex-col gap-1 ${author.role === "admin" ? "items-end" : ""}`}>
               <span className="text-xs font-medium text-muted">
                 {author.displayName || author.email}

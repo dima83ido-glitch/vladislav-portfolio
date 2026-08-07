@@ -10,6 +10,7 @@ import { checkRateLimit } from "@/lib/security/rate-limit";
 import { sendOrderPaidEmail } from "@/lib/email/resend";
 import { getStripeClient, isStripeConfigured } from "@/lib/payments/stripe";
 import { SITE } from "@/lib/data/site";
+import { notifyUser } from "@/db/queries/notifications";
 import { cryptoPaymentSchema } from "./validation";
 
 const CRYPTO_SUBMIT_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
@@ -154,6 +155,7 @@ export async function approvePayment(paymentId: string) {
   await db.update(orders).set({ status: "paid", updatedAt: new Date() }).where(eq(orders.id, payment.orderId));
 
   await notifyOrderPaid(payment.orderId);
+  await notifyUser(payment.userId, "orders", "order_status", payment.orderId);
 
   revalidatePath("/admin/payments");
   revalidatePath(`/account/orders/${payment.orderId}`);
@@ -175,6 +177,8 @@ export async function rejectPayment(paymentId: string) {
     .update(orders)
     .set({ status: "payment_rejected", updatedAt: new Date() })
     .where(eq(orders.id, payment.orderId));
+
+  await notifyUser(payment.userId, "orders", "order_status", payment.orderId);
 
   revalidatePath("/admin/payments");
   revalidatePath(`/account/orders/${payment.orderId}`);
