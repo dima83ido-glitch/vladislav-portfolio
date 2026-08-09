@@ -63,22 +63,27 @@ export function PlanForm({ plan }: { plan?: DbPricingPlan }) {
       status,
     };
 
-    const result = plan ? await updatePlan(plan.id, payload) : await createPlan(payload);
-    setIsPending(false);
+    try {
+      const result = plan ? await updatePlan(plan.id, payload) : await createPlan(payload);
 
-    if (!result.ok) {
-      setError(
-        result.error === "slugTaken"
-          ? t("errorSlugTaken")
-          : result.error === "invalid"
-            ? pt("errorCheckFields")
-            : t("errorGeneric")
-      );
-      return;
+      if (!result.ok) {
+        setError(
+          result.error === "slugTaken"
+            ? t("errorSlugTaken")
+            : result.error === "invalid"
+              ? pt("errorCheckFields")
+              : t("errorGeneric")
+        );
+        return;
+      }
+
+      router.push("/admin/pricing");
+      router.refresh();
+    } catch {
+      setError(t("errorGeneric"));
+    } finally {
+      setIsPending(false);
     }
-
-    router.push("/admin/pricing");
-    router.refresh();
   }
 
   return (

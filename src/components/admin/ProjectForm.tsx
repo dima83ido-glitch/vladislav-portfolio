@@ -55,27 +55,33 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
     if (!file) return;
 
     setIsUploading(true);
+    setError(null);
     const formData = new FormData();
     formData.append("file", file);
-    const result = await uploadProjectCoverImage(formData);
-    setIsUploading(false);
+    try {
+      const result = await uploadProjectCoverImage(formData);
 
-    if (!result.ok) {
-      const errorKey =
-        result.error === "notConfigured"
-          ? "mediaNotConfigured"
-          : result.error === "tooLarge"
-            ? "uploadTooLarge"
-            : result.error === "unsupportedFormat" || result.error === "broken"
-              ? "uploadUnsupportedFormat"
-              : result.error === "rateLimited"
-                ? "uploadRateLimited"
-                : "uploadFailed";
-      setError(pt(errorKey));
-      return;
+      if (!result.ok) {
+        const errorKey =
+          result.error === "notConfigured"
+            ? "mediaNotConfigured"
+            : result.error === "tooLarge"
+              ? "uploadTooLarge"
+              : result.error === "unsupportedFormat" || result.error === "broken"
+                ? "uploadUnsupportedFormat"
+                : result.error === "rateLimited"
+                  ? "uploadRateLimited"
+                  : "uploadFailed";
+        setError(pt(errorKey));
+        return;
+      }
+      setCoverImageUrl(result.url);
+      setCoverImagePublicId(result.publicId);
+    } catch {
+      setError(pt("uploadFailed"));
+    } finally {
+      setIsUploading(false);
     }
-    setCoverImageUrl(result.url);
-    setCoverImagePublicId(result.publicId);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -106,22 +112,27 @@ export function ProjectForm({ project }: { project?: PortfolioProject }) {
       status,
     };
 
-    const result = project ? await updateProject(project.id, payload) : await createProject(payload);
-    setIsPending(false);
+    try {
+      const result = project ? await updateProject(project.id, payload) : await createProject(payload);
 
-    if (!result.ok) {
-      setError(
-        result.error === "slugTaken"
-          ? t("errorSlugTaken")
-          : result.error === "invalid"
-            ? t("errorCheckFields")
-            : t("errorGeneric")
-      );
-      return;
+      if (!result.ok) {
+        setError(
+          result.error === "slugTaken"
+            ? t("errorSlugTaken")
+            : result.error === "invalid"
+              ? t("errorCheckFields")
+              : t("errorGeneric")
+        );
+        return;
+      }
+
+      router.push("/admin/portfolio");
+      router.refresh();
+    } catch {
+      setError(t("errorGeneric"));
+    } finally {
+      setIsPending(false);
     }
-
-    router.push("/admin/portfolio");
-    router.refresh();
   }
 
   return (

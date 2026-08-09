@@ -27,18 +27,18 @@ async function assertSlugFree(slug: string, excludeId?: string) {
 export async function createPlan(
   input: PlanInput
 ): Promise<{ ok: true; id: string } | { ok: false; error: "invalid" | "slugTaken" | "generic" }> {
-  await requireAdmin();
-
-  const parsed = planSchema.safeParse(input);
-  if (!parsed.success) {
-    return { ok: false, error: "invalid" };
-  }
-
-  if (!(await assertSlugFree(parsed.data.slug))) {
-    return { ok: false, error: "slugTaken" };
-  }
-
   try {
+    await requireAdmin();
+
+    const parsed = planSchema.safeParse(input);
+    if (!parsed.success) {
+      return { ok: false, error: "invalid" };
+    }
+
+    if (!(await assertSlugFree(parsed.data.slug))) {
+      return { ok: false, error: "slugTaken" };
+    }
+
     const [plan] = await getDb()
       .insert(pricingPlans)
       .values({
@@ -69,18 +69,18 @@ export async function updatePlan(
   id: string,
   input: PlanInput
 ): Promise<{ ok: true } | { ok: false; error: "invalid" | "slugTaken" | "generic" }> {
-  await requireAdmin();
-
-  const parsed = planSchema.safeParse(input);
-  if (!parsed.success) {
-    return { ok: false, error: "invalid" };
-  }
-
-  if (!(await assertSlugFree(parsed.data.slug, id))) {
-    return { ok: false, error: "slugTaken" };
-  }
-
   try {
+    await requireAdmin();
+
+    const parsed = planSchema.safeParse(input);
+    if (!parsed.success) {
+      return { ok: false, error: "invalid" };
+    }
+
+    if (!(await assertSlugFree(parsed.data.slug, id))) {
+      return { ok: false, error: "slugTaken" };
+    }
+
     await getDb()
       .update(pricingPlans)
       .set({
@@ -108,8 +108,14 @@ export async function updatePlan(
   }
 }
 
-export async function deletePlan(id: string) {
-  await requireAdmin();
-  await getDb().delete(pricingPlans).where(eq(pricingPlans.id, id));
-  revalidateHomepages();
+export async function deletePlan(id: string): Promise<{ ok: true } | { ok: false; error: "generic" }> {
+  try {
+    await requireAdmin();
+    await getDb().delete(pricingPlans).where(eq(pricingPlans.id, id));
+    revalidateHomepages();
+    return { ok: true };
+  } catch (error) {
+    console.error("Failed to delete plan:", error);
+    return { ok: false, error: "generic" };
+  }
 }
