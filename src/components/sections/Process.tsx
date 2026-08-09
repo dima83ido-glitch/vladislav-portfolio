@@ -49,10 +49,17 @@ export function Process() {
         />
 
         <div ref={timelineRef} className="relative mt-20">
-          <div className="absolute left-[19px] top-0 h-full w-px bg-line sm:left-[27px]" />
+          {/*
+            Line center must sit exactly on the number-circle center: row
+            padding (pl-2 = 0.5rem) + circle radius (w-10/h-10 = 2.5rem, so
+            1.25rem; sm:w-14/h-14 = 3.5rem, so 1.75rem). left-1/2 + a
+            -translate-x-1/2 puts the 1px line's center — not its edge — at
+            that x, so it stays correct regardless of the line's own width.
+          */}
+          <div className="absolute left-[1.75rem] top-0 h-full w-px -translate-x-1/2 bg-line sm:left-[2.25rem]" />
           <div
             ref={progressRef}
-            className="absolute left-[19px] top-0 w-px bg-blue-soft sm:left-[27px]"
+            className="absolute left-[1.75rem] top-0 w-px -translate-x-1/2 bg-blue-soft sm:left-[2.25rem]"
             style={{ height: "0%" }}
           />
 
