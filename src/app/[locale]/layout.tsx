@@ -143,7 +143,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     name: SITE.name,
     description: t("description"),
     url: SITE.url,
-    image: `${SITE.url}/opengraph-image`,
+    image: `${SITE.url}/${locale}/opengraph-image`,
     areaServed: "Worldwide",
     inLanguage: locale,
     founder: {

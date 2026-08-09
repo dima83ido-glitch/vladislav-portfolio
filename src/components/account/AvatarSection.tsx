@@ -22,7 +22,7 @@ export function AvatarSection({ user }: { user: AvatarUser }) {
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label={t("editButton")}
-          className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-surface bg-foreground text-background transition-transform duration-200 hover:scale-110 hover:bg-blue-soft"
+          className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-surface bg-foreground text-background transition-transform duration-200 hover:scale-110 hover:bg-blue-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           data-cursor-pointer
         >
           <FiCamera size={13} />

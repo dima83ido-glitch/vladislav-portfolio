@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { SITE } from "@/lib/data/site";
+import { routing } from "@/i18n/routing";
 
 const OG_ROLE = "Full-Stack Web Developer";
 const OG_TAGLINE = "Design. Code. Result.";
@@ -7,6 +8,14 @@ const OG_TAGLINE = "Design. Code. Result.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = `${SITE.name} — Premium Web Development Studio`;
+
+// Keeps this statically prerendered per locale (matches the layout's own
+// generateStaticParams) now that the file lives under [locale] — moved here
+// from the bare app root so it inherits metadataBase from layout.tsx instead
+// of resolving with no metadataBase at all.
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export default async function OpengraphImage() {
   return new ImageResponse(

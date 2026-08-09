@@ -209,7 +209,7 @@ export function AvatarEditModal({
                   type="button"
                   onClick={onClose}
                   aria-label={t("close")}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted transition-colors hover:bg-line/60 hover:text-foreground"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted transition-colors hover:bg-line/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft"
                 >
                   <FiX size={16} />
                 </button>
@@ -220,12 +220,13 @@ export function AvatarEditModal({
                   <button
                     key={tabKey}
                     type="button"
+                    disabled={isSubmitting}
                     onClick={() => {
                       setTab(tabKey);
                       setError(null);
                     }}
                     className={cn(
-                      "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                      "rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft disabled:cursor-not-allowed disabled:opacity-50",
                       tab === tabKey ? "bg-foreground text-background" : "text-muted hover:text-foreground"
                     )}
                   >
@@ -272,7 +273,7 @@ export function AvatarEditModal({
                             whileHover={{ scale: 1.08, y: -2 }}
                             whileTap={{ scale: 0.96 }}
                             className={cn(
-                              "flex aspect-square items-center justify-center rounded-2xl border bg-gradient-to-br from-blue-soft/10 to-blue/5 text-2xl transition-colors",
+                              "flex aspect-square items-center justify-center rounded-2xl border bg-gradient-to-br from-blue-soft/10 to-blue/5 text-2xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft disabled:cursor-not-allowed",
                               isSelected
                                 ? "border-blue-soft ring-2 ring-blue-soft/40"
                                 : "border-line-strong hover:border-blue-soft",
@@ -296,16 +297,37 @@ export function AvatarEditModal({
                 ) : (
                   <div className="flex flex-col gap-4">
                     <div
+                      role="button"
+                      tabIndex={isSubmitting ? -1 : 0}
+                      aria-disabled={isSubmitting}
                       onDragOver={(event) => {
+                        if (isSubmitting) return;
                         event.preventDefault();
                         setIsDragging(true);
                       }}
                       onDragLeave={() => setIsDragging(false)}
-                      onDrop={handleDrop}
-                      onClick={() => fileInputRef.current?.click()}
+                      onDrop={(event) => {
+                        if (isSubmitting) {
+                          event.preventDefault();
+                          return;
+                        }
+                        handleDrop(event);
+                      }}
+                      onClick={() => {
+                        if (isSubmitting) return;
+                        fileInputRef.current?.click();
+                      }}
+                      onKeyDown={(event) => {
+                        if (isSubmitting) return;
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          fileInputRef.current?.click();
+                        }
+                      }}
                       className={cn(
-                        "flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed px-4 py-8 text-center transition-colors",
-                        isDragging ? "border-blue-soft bg-blue-soft/5" : "border-line-strong hover:border-blue-soft"
+                        "flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed px-4 py-8 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft",
+                        isDragging ? "border-blue-soft bg-blue-soft/5" : "border-line-strong hover:border-blue-soft",
+                        isSubmitting && "pointer-events-none opacity-60"
                       )}
                       data-cursor-pointer
                     >
@@ -344,7 +366,7 @@ export function AvatarEditModal({
                       type="button"
                       onClick={handleUpload}
                       disabled={!file || isSubmitting}
-                      className="w-full rounded-full bg-foreground px-6 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft disabled:opacity-50"
+                      className="w-full rounded-full bg-foreground px-6 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-blue-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {isSubmitting ? t("uploading") : t("uploadButton")}
                     </button>
@@ -359,7 +381,7 @@ export function AvatarEditModal({
                   type="button"
                   onClick={handleReset}
                   disabled={isSubmitting}
-                  className="mt-6 flex items-center gap-2 text-xs font-medium text-muted transition-colors hover:text-foreground disabled:opacity-50"
+                  className="mt-6 flex items-center gap-2 text-xs font-medium text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <FiRotateCcw size={13} />
                   {t("resetButton")}
