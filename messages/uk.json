@@ -55,7 +55,6 @@
     "more": "Більше",
     "connect": "Зв'язок",
     "telegram": "Telegram",
-    "github": "GitHub",
     "email": "Пошта",
     "rights": "© {year} {name}. Всі права захищено.",
     "designedBy": "Розроблено та створено {name} — {location}"
@@ -424,7 +423,6 @@
     "sayHello": "Написати",
     "methods": {
       "telegram": "Telegram",
-      "github": "GitHub",
       "email": "Пошта"
     }
   },

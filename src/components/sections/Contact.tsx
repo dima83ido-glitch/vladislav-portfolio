@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { FiArrowUpRight, FiGithub, FiMail, FiSend } from "react-icons/fi";
+import { FiArrowUpRight, FiMail, FiSend } from "react-icons/fi";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -18,12 +18,6 @@ export function Contact() {
       value: SITE.contact.telegramHandle,
       href: SITE.contact.telegramUrl,
       icon: FiSend,
-    },
-    {
-      key: "github",
-      value: SITE.contact.githubHandle,
-      href: SITE.contact.githubUrl,
-      icon: FiGithub,
     },
     {
       key: "email",
@@ -59,7 +53,7 @@ export function Contact() {
           </MagneticButton>
         </Reveal>
 
-        <div className="mx-auto mt-24 grid max-w-3xl grid-cols-1 gap-5 sm:grid-cols-3">
+        <div className="mx-auto mt-24 grid max-w-xl grid-cols-1 gap-5 sm:grid-cols-2">
           {CONTACT_METHODS.map((method, i) => (
             <Reveal key={method.key} variant="up" delay={0.1 + i * 0.1}>
               <motion.a

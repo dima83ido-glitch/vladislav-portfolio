@@ -55,7 +55,6 @@
     "more": "More",
     "connect": "Connect",
     "telegram": "Telegram",
-    "github": "GitHub",
     "email": "Email",
     "rights": "© {year} {name}. All rights reserved.",
     "designedBy": "Designed & built by {name} — {location}"
@@ -424,7 +423,6 @@
     "sayHello": "Say hello",
     "methods": {
       "telegram": "Telegram",
-      "github": "GitHub",
       "email": "Email"
     }
   },

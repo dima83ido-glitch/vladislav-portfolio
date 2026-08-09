@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { FiArrowUpRight, FiGithub, FiMail, FiSend } from "react-icons/fi";
+import { FiArrowUpRight, FiMail, FiSend } from "react-icons/fi";
 import { Link } from "@/i18n/navigation";
 import { NAV_LINKS } from "@/lib/data/nav";
 import { SITE } from "@/lib/data/site";
@@ -89,16 +89,6 @@ export function Footer() {
                   className="flex items-center gap-2 text-sm text-foreground/80 transition-colors hover:text-blue-soft"
                 >
                   <FiSend size={14} /> {t("telegram")}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={SITE.contact.githubUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="flex items-center gap-2 text-sm text-foreground/80 transition-colors hover:text-blue-soft"
-                >
-                  <FiGithub size={14} /> {t("github")}
                 </a>
               </li>
               <li>
